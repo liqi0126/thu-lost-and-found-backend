@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class PropertyServiceConfig(AppConfig):
-    name = 'property_service'
+    name = 'thu_lost_and_found_backend.property_service'

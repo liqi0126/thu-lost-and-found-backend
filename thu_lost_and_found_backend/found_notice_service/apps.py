@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class FoundNoticeServiceConfig(AppConfig):
-    name = 'found_notice_service'
+    name = 'thu_lost_and_found_backend.found_notice_service'

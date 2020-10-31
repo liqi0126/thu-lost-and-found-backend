@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class DashboardServiceConfig(AppConfig):
-    name = 'dashboard_service'
+    name = 'thu_lost_and_found_backend.dashboard_service'

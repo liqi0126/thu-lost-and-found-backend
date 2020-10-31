@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class UserServiceConfig(AppConfig):
-    name = 'user_service'
+    name = 'thu_lost_and_found_backend.user_service'
