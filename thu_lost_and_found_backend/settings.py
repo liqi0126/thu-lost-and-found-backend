@@ -37,6 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # thu-lost-and-found
+    'thu_lost_and_found_backend.contact_service.apps.ContactServiceConfig',
+    'thu_lost_and_found_backend.dashboard_service.apps.DashboardServiceConfig',
+    'thu_lost_and_found_backend.found_notice_service.apps.FoundNoticeServiceConfig',
+    'thu_lost_and_found_backend.lost_notice_service.apps.LostNoticeServiceConfig',
+    'thu_lost_and_found_backend.property_service.apps.PropertyServiceConfig',
+    'thu_lost_and_found_backend.user_service.apps.UserServiceConfig',
 ]
 
 MIDDLEWARE = [
