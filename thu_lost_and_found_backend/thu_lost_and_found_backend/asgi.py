@@ -1,5 +1,5 @@
 """
-ASGI config for lost_and_found project.
+ASGI config for thu_lost_and_found_backend project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lost_and_found.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'thu_lost_and_found_backend.settings')
 
 application = get_asgi_application()

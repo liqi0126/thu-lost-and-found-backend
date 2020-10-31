@@ -1,7 +1,7 @@
-# lost and found
+# THU Lost and Found Backend
 
-## dependency
-
+## Setup
 ```shell script
-pip install pymysql
+pip install -r requirements.txt
+python manage.py migrate
 ```

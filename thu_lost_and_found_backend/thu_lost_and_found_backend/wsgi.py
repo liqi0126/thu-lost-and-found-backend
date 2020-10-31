@@ -1,5 +1,5 @@
 """
-WSGI config for lost_and_found project.
+WSGI config for thu_lost_and_found_backend project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lost_and_found.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'thu_lost_and_found_backend.settings')
 
 application = get_wsgi_application()
