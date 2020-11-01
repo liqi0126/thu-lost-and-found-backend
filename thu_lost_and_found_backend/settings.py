@@ -2,7 +2,6 @@ from pathlib import Path
 import environ
 import os
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # thu-lost-and-found
+    'thu_lost_and_found_backend',
     'thu_lost_and_found_backend.contact_service.apps.ContactServiceConfig',
     'thu_lost_and_found_backend.dashboard_service.apps.DashboardServiceConfig',
     'thu_lost_and_found_backend.found_notice_service.apps.FoundNoticeServiceConfig',
@@ -86,6 +86,8 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = "user_service.User"
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -121,3 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
