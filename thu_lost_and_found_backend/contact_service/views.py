@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework import viewsets
 
-# Create your views here.
+from thu_lost_and_found_backend.contact_service.models import Contact
+from thu_lost_and_found_backend.contact_service.serializer import ContactSerializer
+
+
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer

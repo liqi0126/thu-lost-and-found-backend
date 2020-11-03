@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework import viewsets
 
-# Create your views here.
+from thu_lost_and_found_backend.found_notice_service.models import FoundNotice
+from thu_lost_and_found_backend.found_notice_service.serializer import FoundNoticeSerializer
+
+
+class FoundNoticeViewSet(viewsets.ModelViewSet):
+    queryset = FoundNotice.objects.all()
+    serializer_class = FoundNoticeSerializer
