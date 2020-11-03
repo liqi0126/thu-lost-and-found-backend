@@ -25,6 +25,9 @@ class PropertyType(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
 
 class PropertyTemplate(models.Model):
     name = models.CharField(max_length=30, unique=True)
@@ -35,6 +38,9 @@ class PropertyTemplate(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Property(models.Model):
     name = models.CharField(max_length=30)
@@ -44,3 +50,6 @@ class Property(models.Model):
     extra = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)
+
+    def __str__(self):
+        return self.name
