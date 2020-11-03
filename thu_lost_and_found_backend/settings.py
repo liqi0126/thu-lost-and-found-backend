@@ -21,7 +21,7 @@ SECRET_KEY = env('APP_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('APP_DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'thu_lost_and_found_backend.lost_notice_service.apps.LostNoticeServiceConfig',
     'thu_lost_and_found_backend.property_service.apps.PropertyServiceConfig',
     'thu_lost_and_found_backend.user_service.apps.UserServiceConfig',
+
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +129,22 @@ STATIC_URL = '/static/'
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+DEFAULT_RENDERER_CLASSES = ['rest_framework.renderers.JSONRenderer']
+if DEBUG:
+    DEFAULT_RENDERER_CLASSES.append('rest_framework.renderers.BrowsableAPIRenderer')
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    # ],
+    # TODO: enable authentication
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_PERMISSION_CLASSES': [],
+    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
