@@ -132,3 +132,5 @@ dmypy.json
 # migrations
 migrations/
 .idea/
+
+/media/

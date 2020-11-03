@@ -1,12 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
+import time
 
 
 class UserStatus(models.TextChoices):
     ACTIVE = 'ACT', _('Active')
     INACTIVE = "INA", _('Inactive')
     SUSPENDED = 'SUS', _('Suspended')
+
+
+def avatar_upload_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f'{instance.username}_{int(time.time())}.{ext}'
+    return f'user_avatars/{filename}'
 
 
 class User(AbstractUser):
