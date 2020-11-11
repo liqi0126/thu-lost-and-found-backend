@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework import viewsets
 
-# Create your views here.
+from thu_lost_and_found_backend.authentication_service.models import UserVerificationApplication
+from thu_lost_and_found_backend.authentication_service.serializer import UserVerificationApplicationSerializer
+
+
+class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
+    queryset = UserVerificationApplication.objects.all()
+    serializer_class = UserVerificationApplicationSerializer

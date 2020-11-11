@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
 
+from thu_lost_and_found_backend.authentication_service.views import UserVerificationApplicationViewSet
 from thu_lost_and_found_backend.contact_service.views import ContactViewSet
 from thu_lost_and_found_backend.found_notice_service.views import FoundNoticeViewSet
 from thu_lost_and_found_backend.lost_notice_service.views import LostNoticeViewSet
@@ -21,6 +22,7 @@ router.register(r'tags', TagViewSet)
 router.register(r'found-notices', FoundNoticeViewSet)
 router.register(r'lost-notices', LostNoticeViewSet)
 router.register(r'users', UserViewSet)
+router.register(r'user-verification-applications', UserVerificationApplicationViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
