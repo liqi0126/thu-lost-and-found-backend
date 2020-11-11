@@ -6,7 +6,6 @@ from thu_lost_and_found_backend.tag_service.models import Tag
 
 def media_upload_path(instance, filename):
     model_name = instance.__class__.__name__
-    print(model_name)
     folder_name = ''
 
     if model_name == PropertyType.__name__:
