@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from thu_lost_and_found_backend.property_service.models import PropertyType, PropertyTemplate, Property
+from thu_lost_and_found_backend.tag_service.models import Tag
 
 
 class PropertyTemplateSerializer(serializers.ModelSerializer):
@@ -21,8 +22,10 @@ class PropertyTypeSerializer(serializers.ModelSerializer):
 
 
 class PropertySerializer(serializers.ModelSerializer):
-    queryset = PropertyTemplate.objects.all()
-    template = serializers.PrimaryKeyRelatedField(queryset=queryset)
+    template_queryset = PropertyTemplate.objects.all()
+    template = serializers.PrimaryKeyRelatedField(queryset=template_queryset)
+    tag_queryset = Tag.objects.all()
+    tags = serializers.PrimaryKeyRelatedField(many=True, queryset=tag_queryset)
 
     # TODO: add notices
     class Meta:

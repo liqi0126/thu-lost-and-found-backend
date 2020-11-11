@@ -9,6 +9,7 @@ from thu_lost_and_found_backend.found_notice_service.views import FoundNoticeVie
 from thu_lost_and_found_backend.lost_notice_service.views import LostNoticeViewSet
 from thu_lost_and_found_backend.property_service.views import PropertyTypeViewSet, PropertyTemplateViewSet, \
     PropertyViewSet
+from thu_lost_and_found_backend.tag_service.views import TagViewSet
 from thu_lost_and_found_backend.user_service.views import UserViewSet
 
 router = routers.DefaultRouter()
@@ -16,6 +17,7 @@ router.register(r'property-types', PropertyTypeViewSet)
 router.register(r'property-templates', PropertyTemplateViewSet)
 router.register(r'properties', PropertyViewSet)
 router.register(r'contacts', ContactViewSet)
+router.register(r'tags', TagViewSet)
 router.register(r'found-notices', FoundNoticeViewSet)
 router.register(r'lost-notices', LostNoticeViewSet)
 router.register(r'users', UserViewSet)
