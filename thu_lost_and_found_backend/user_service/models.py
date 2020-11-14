@@ -20,7 +20,7 @@ class User(AbstractUser):
     # Inherited fields
     # id, password, username, first_name, last_name, email,
     # is_superuser, is_staff, is_active, last_login,  date_joined
-    avatar = models.ImageField(upload_to='user_avatars/', null=True, blank=True)
+    avatar = models.ImageField(upload_to=avatar_upload_path, null=True, blank=True)
 
     phone = models.CharField(max_length=20, null=True, blank=True, unique=True)
     student_id = models.CharField(max_length=20, null=True, blank=True, unique=True)

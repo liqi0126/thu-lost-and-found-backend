@@ -1,10 +1,11 @@
 from django.db import models
 import time
 
+from thu_lost_and_found_backend.tag_service.models import Tag
+
 
 def media_upload_path(instance, filename):
     model_name = instance.__class__.__name__
-    print(model_name)
     folder_name = ''
 
     if model_name == PropertyType.__name__:
@@ -47,6 +48,7 @@ class Property(models.Model):
     template = models.ForeignKey(PropertyTemplate, on_delete=models.CASCADE, related_name='properties')
     attributes = models.JSONField(default=None)
     description = models.CharField(max_length=500, null=True, blank=True)
+    tags = models.ManyToManyField(Tag, related_name='properties', blank=True)
     extra = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)
