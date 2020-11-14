@@ -1,3 +1,5 @@
+import json
+
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
@@ -18,6 +20,14 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        if len(request.FILES) != 0:
+            images_url = save_uploaded_images(request, 'lost_notice_images', model=LostNotice)
+            request.data['images'] = json.dumps(images_url)
+            # Update serializer
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
