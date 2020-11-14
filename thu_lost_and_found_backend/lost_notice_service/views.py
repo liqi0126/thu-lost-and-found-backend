@@ -2,10 +2,9 @@ import json
 
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
 
 from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, delete_instance_medias
 from thu_lost_and_found_backend.lost_notice_service.models import LostNotice
@@ -35,6 +34,8 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         delete_instance_medias(instance, 'images', json=True)
         instance.delete()
+
+    # TODO: update json images
 
     @action(detail=True, methods=['post'], url_path='upload-image')
     def upload_image(self, request, pk=None):
