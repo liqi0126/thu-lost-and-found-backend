@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
-import time
+
+from thu_lost_and_found_backend.helpers.toolkits import timestamp_filename
 
 
 class UserStatus(models.TextChoices):
@@ -12,7 +13,7 @@ class UserStatus(models.TextChoices):
 
 def avatar_upload_path(instance, filename):
     ext = filename.split('.')[-1]
-    filename = f'{instance.username}_{int(time.time())}.{ext}'
+    filename = timestamp_filename(instance.name, ext)
     return f'user_avatars/{filename}'
 
 
