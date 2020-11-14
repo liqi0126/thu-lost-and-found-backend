@@ -39,7 +39,8 @@ def delete_media_instance(model, pk, media_attributes):
 
 def save_uploaded_images(request, upload_to, instance):
     """
-    @return: array of JSON string if success, None if fail
+    Save images as urls in json in database
+    @return: True if success, False if fail
     """
 
     # /media/
@@ -66,12 +67,22 @@ def save_uploaded_images(request, upload_to, instance):
             image.save(save_file_path)
 
             # Image url for database
-            file_abs_url = k_app_url + k_media_url + save_file_name
+            file_abs_url = k_app_url + k_media_url + f'{upload_to}/' + save_file_name
 
             result.append(file_abs_url)
 
-        return result
+        # Update database
+        if not instance.images:
+            instance_images = {'image_urls': []}
+        else:
+            instance_images = instance.images
+
+        instance_images['image_urls'].extend(result)
+        instance.images = instance_images
+        instance.save()
+
+        return True
 
     except (ValueError, OSError) as error:
         print(f'Save Image Error: {error}')
-        return None
+        return False
