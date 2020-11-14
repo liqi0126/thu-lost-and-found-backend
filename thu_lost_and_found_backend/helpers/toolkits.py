@@ -26,15 +26,21 @@ def delete_media_file(file_path):
             raise  # re-raise exception if a different error occurred
 
 
-def delete_media_instance(instance, media_attributes):
+def delete_instance_medias(instance, media_attributes, json=False):
     # Handle single attribute
     if type(media_attributes) not in [list, tuple]:
         media_attributes = [media_attributes]
 
     for attribute in media_attributes:
-        url = getattr(instance, attribute).url
-        delete_media_file(url)
-    instance.delete()
+        if not json:
+            url = getattr(instance, attribute).url
+            delete_media_file(url)
+        else:
+            image_abs_urls = getattr(instance, attribute)
+            for image_abs_url in image_abs_urls:
+                url = image_abs_url
+                start_index = url.find(settings.MEDIA_URL)
+                delete_media_file(url[start_index:])
 
 
 def save_uploaded_images(request, upload_to, instance=None, model=None):

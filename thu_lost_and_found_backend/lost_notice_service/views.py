@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 
-from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images
+from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, delete_instance_medias
 from thu_lost_and_found_backend.lost_notice_service.models import LostNotice
 from thu_lost_and_found_backend.lost_notice_service.serializer import LostNoticeSerializer
 
@@ -31,6 +31,10 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_destroy(self, instance):
+        delete_instance_medias(instance, 'images', json=True)
+        instance.delete()
 
     @action(detail=True, methods=['post'], url_path='upload-image')
     def upload_image(self, request, pk=None):
