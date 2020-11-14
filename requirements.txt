@@ -5,5 +5,7 @@ mysqlclient==2.0.1
 Pillow==8.0.1
 pytz==2020.1
 sqlparse==0.4.1
-
+pymysql==0.10.1
 djangorestframework~=3.12.1
+gunicorn==19.9.0
+environs

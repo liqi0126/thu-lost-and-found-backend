@@ -1,16 +1,16 @@
 from pathlib import Path
-import environ
+from environs import Env
 import os
+
+import pymysql
+pymysql.version_info = (1, 4, 0, "final", 0)
+pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env(
-    # set casting, default value
-    APP_DEBUG=(bool, False)
-)
-env_file = os.path.join(BASE_DIR, ".env")
-environ.Env.read_env(env_file)
+env = Env()
+env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -34,12 +34,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # thu-lost-and-found
     'thu_lost_and_found_backend',
+    'thu_lost_and_found_backend.user_service.apps.UserServiceConfig',
     'thu_lost_and_found_backend.contact_service.apps.ContactServiceConfig',
     'thu_lost_and_found_backend.dashboard_service.apps.DashboardServiceConfig',
     'thu_lost_and_found_backend.found_notice_service.apps.FoundNoticeServiceConfig',
     'thu_lost_and_found_backend.lost_notice_service.apps.LostNoticeServiceConfig',
     'thu_lost_and_found_backend.property_service.apps.PropertyServiceConfig',
-    'thu_lost_and_found_backend.user_service.apps.UserServiceConfig',
 
     'rest_framework',
 ]
@@ -124,6 +124,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, 'static'))
 STATIC_URL = '/static/'
 
 # Media files
