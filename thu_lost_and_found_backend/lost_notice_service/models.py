@@ -31,7 +31,7 @@ class LostNotice(models.Model):
                                    related_name='found_property_notices')
     found_datetime = models.DateTimeField(null=True, blank=True)
 
-    author = models.OneToOneField(User, on_delete=models.CASCADE, related_name='lost_notice')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lost_notice')
 
     extra = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)

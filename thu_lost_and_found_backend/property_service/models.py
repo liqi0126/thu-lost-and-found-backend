@@ -1,6 +1,6 @@
 from django.db import models
-import time
 
+from thu_lost_and_found_backend.helpers.toolkits import timestamp_filename
 from thu_lost_and_found_backend.tag_service.models import Tag
 
 
@@ -14,7 +14,7 @@ def media_upload_path(instance, filename):
         folder_name = 'property_template_thumbnails'
 
     ext = filename.split('.')[-1]
-    filename = f'{instance.name}_{int(time.time())}.{ext}'
+    filename = timestamp_filename(instance.name, ext)
 
     return f'{folder_name}/{filename}'
 
