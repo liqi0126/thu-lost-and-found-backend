@@ -26,12 +26,11 @@ def delete_media_file(file_path):
             raise  # re-raise exception if a different error occurred
 
 
-def delete_media_instance(model, pk, media_attributes):
+def delete_media_instance(instance, media_attributes):
     # Handle single attribute
     if type(media_attributes) not in [list, tuple]:
         media_attributes = [media_attributes]
 
-    instance = get_object_or_404(model, pk=pk)
     for attribute in media_attributes:
         url = getattr(instance, attribute).url
         delete_media_file(url)

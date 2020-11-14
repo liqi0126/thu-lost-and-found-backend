@@ -10,6 +10,6 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    def destroy(self, request, pk=None):
-        delete_media_instance(User, pk, 'avatar')
-        return Response(status=204)
+    def perform_destroy(self, instance):
+        delete_media_instance(instance, 'avatar')
+        instance.delete()

@@ -11,18 +11,18 @@ class PropertyTypeViewSet(viewsets.ModelViewSet):
     queryset = PropertyType.objects.all()
     serializer_class = PropertyTypeSerializer
 
-    def destroy(self, request, pk=None):
-        delete_media_instance(PropertyType, pk, 'thumbnail')
-        return Response(status=204)
+    def perform_destroy(self, instance):
+        delete_media_instance(instance, 'thumbnail')
+        instance.delete()
 
 
 class PropertyTemplateViewSet(viewsets.ModelViewSet):
     queryset = PropertyTemplate.objects.all()
     serializer_class = PropertyTemplateSerializer
 
-    def destroy(self, request, pk=None):
-        delete_media_instance(PropertyTemplate, pk, 'thumbnail')
-        return Response(status=204)
+    def perform_destroy(self, instance):
+        delete_media_instance(instance, 'thumbnail')
+        instance.delete()
 
 
 class PropertyViewSet(viewsets.ModelViewSet):
