@@ -1,14 +1,15 @@
 version: "3"
 services:
   app:
+    container_name: app
     restart: always
     build: .
     command: >
       bash -c
-      "gunicorn thu_lost_and_found_backend.wsgi -w 4 -k gthread -b 0.0.0.0:8000 --log-level=debug --access-logfile error.log"
+      "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn thu_lost_and_found_backend.wsgi -w 4 -k gthread -b 0.0.0.0:8000"
     volumes:
       - .:/code
-      - static-volume:/static
+      - static-volume:/code/static
     expose:
       - "8000"
     depends_on:
@@ -17,17 +18,18 @@ services:
       - web_network
       - db_network
   db:
+    container_name: ${DB_HOST}
     image: mysql:latest
     env_file: .env
 #    volumes:
-#      - ./db:/docker-entrypoint-initdb.d/:ro
-#      - /home/ubuntu/mysql:/var/lib/mysql
+#      - ./mysql:/var/lib/mysql
     expose:
       - "3306"
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - TZ=Asia/Shanghai
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
     networks:
@@ -36,9 +38,9 @@ services:
     restart: always
     image: nginx:latest
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
-      - static-volume:/static
+      - static-volume:/code/static
       - ./config/nginx:/etc/nginx/conf.d
     depends_on:
       - app
