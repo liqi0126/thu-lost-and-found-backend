@@ -6,10 +6,11 @@ services:
     build: .
     command: >
       bash -c
-      "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn thu_lost_and_found_backend.wsgi -w 4 -k gthread -b 0.0.0.0:8000"
+      "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn thu_lost_and_found_backend.wsgi -w 4 -k gthread -b 0.0.0.0:8000"
     volumes:
       - .:/code
       - static-volume:/code/static
+      - media-volume:/code/media
     expose:
       - "8000"
     depends_on:
@@ -35,12 +36,14 @@ services:
     networks:
       - db_network
   nginx:
+    container_name: nginx
     restart: always
     image: nginx:latest
     ports:
       - "80:80"
     volumes:
       - static-volume:/code/static
+      - media-volume:/code/media
       - ./config/nginx:/etc/nginx/conf.d
     depends_on:
       - app
@@ -54,4 +57,5 @@ networks:
     driver: bridge
 
 volumes:
+  media-volume:
   static-volume:
