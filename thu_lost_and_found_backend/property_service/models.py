@@ -44,7 +44,7 @@ class PropertyTemplate(models.Model):
 
 
 class Property(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, null=True, blank=True)
     template = models.ForeignKey(PropertyTemplate, on_delete=models.CASCADE, related_name='properties')
     attributes = models.JSONField(default=None)
     description = models.CharField(max_length=500, null=True, blank=True)
