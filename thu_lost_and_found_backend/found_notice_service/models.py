@@ -18,7 +18,7 @@ class FoundNotice(models.Model):
     description = models.CharField(max_length=500, null=True, blank=True)
 
     found_datetime = models.DateTimeField()
-    found_location = models.JSONField()
+    found_location = models.CharField(max_length=200)
 
     quizzes = models.JSONField(null=True, blank=True)
     contacts = models.ManyToManyField(Contact, related_name='found_notices', default=None)
