@@ -15,9 +15,9 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
     queryset = LostNotice.objects.all()
     serializer_class = LostNoticeSerializer
     # TODO: Custom property type, templates, author filter
-    filterset_fields = ['description', 'status', 'est_lost_start_datetime', 'est_lost_end_datetime', 'found_location',
+    filterset_fields = ['description', 'status', 'est_lost_start_datetime', 'est_lost_end_datetime', 'lost_location',
                         'reward']
-    search_fields = ['description', 'status', 'est_lost_start_datetime', 'est_lost_end_datetime', 'found_location',
+    search_fields = ['description', 'status', 'est_lost_start_datetime', 'est_lost_end_datetime', 'lost_location',
                      'reward']
     ordering = ['-updated_at']
 
