@@ -1,5 +1,4 @@
 from rest_framework import viewsets
-from rest_framework.response import Response
 
 from thu_lost_and_found_backend.helpers.toolkits import delete_instance_medias
 from thu_lost_and_found_backend.property_service.models import PropertyType, PropertyTemplate, Property
