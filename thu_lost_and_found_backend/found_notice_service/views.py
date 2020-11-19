@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.pagination import CursorPagination
 from rest_framework.response import Response
 
 from thu_lost_and_found_backend.found_notice_service.models import FoundNotice
@@ -17,6 +18,7 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
     # TODO: Custom property type, templates, author filter
     filterset_fields = ['description', 'status', 'found_datetime', 'found_location']
     search_fields = ['description', 'status', 'found_datetime', 'found_location']
+    pagination_class = CursorPagination
     ordering = ['-updated_at']
 
     def create(self, request, *args, **kwargs):
