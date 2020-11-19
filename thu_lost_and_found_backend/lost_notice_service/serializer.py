@@ -7,9 +7,8 @@ from thu_lost_and_found_backend.property_service.serializer import PropertySeria
 
 
 class LostNoticeSerializer(serializers.ModelSerializer):
-    queryset = LostNotice.objects.all()
     contacts = ContactSimpleSerializer(many=True)
-    property = PropertySerializer()
+    property = PropertySerializer(read_only=True)
 
     def create(self, validated_data):
         contacts_data = validated_data.pop('contacts')
