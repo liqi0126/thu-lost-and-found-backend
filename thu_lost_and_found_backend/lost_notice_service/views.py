@@ -4,6 +4,7 @@ from django.http import HttpResponseBadRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.pagination import CursorPagination
 from rest_framework.response import Response
 
 from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, delete_instance_medias
@@ -14,12 +15,13 @@ from thu_lost_and_found_backend.lost_notice_service.serializer import LostNotice
 class LostNoticeViewSet(viewsets.ModelViewSet):
     queryset = LostNotice.objects.all()
     serializer_class = LostNoticeSerializer
+    pagination_class = CursorPagination
+    ordering = ['-updated_at']
     # TODO: Custom property type, templates, author filter
     filterset_fields = ['description', 'status', 'est_lost_start_datetime', 'est_lost_end_datetime', 'lost_location',
                         'reward']
     search_fields = ['description', 'status', 'est_lost_start_datetime', 'est_lost_end_datetime', 'lost_location',
                      'reward']
-    ordering = ['-updated_at']
 
     def create(self, request, *args, **kwargs):
 
