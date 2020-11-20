@@ -61,6 +61,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'thu_lost_and_found_backend.authentication_service.middleware.NoticesAuthorizationMiddleware'
 ]
 
 ROOT_URLCONF = 'thu_lost_and_found_backend.urls'
@@ -152,7 +154,9 @@ REST_FRAMEWORK = {
     # ],
     # TODO: enable authentication
     'DEFAULT_AUTHENTICATION_CLASSES': [],
-    'DEFAULT_PERMISSION_CLASSES': [],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser'
+    ],
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework.filters.OrderingFilter',
