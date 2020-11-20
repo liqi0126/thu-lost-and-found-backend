@@ -15,11 +15,11 @@ from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, de
 class FoundNoticeViewSet(viewsets.ModelViewSet):
     queryset = FoundNotice.objects.all()
     serializer_class = FoundNoticeSerializer
+    pagination_class = CursorPagination
+    ordering = ['-updated_at']
     # TODO: Custom property type, templates, author filter
     filterset_fields = ['description', 'status', 'found_datetime', 'found_location']
     search_fields = ['description', 'status', 'found_datetime', 'found_location']
-    pagination_class = CursorPagination
-    ordering = ['-updated_at']
 
     def create(self, request, *args, **kwargs):
 
