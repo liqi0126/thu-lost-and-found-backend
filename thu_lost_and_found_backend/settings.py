@@ -62,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    'thu_lost_and_found_backend.authentication_service.middleware.JWTAuthenticationMiddleware',
     'thu_lost_and_found_backend.authentication_service.middleware.NoticesAuthorizationMiddleware'
 ]
 
@@ -147,13 +148,10 @@ if DEBUG:
     DEFAULT_RENDERER_CLASSES.append('rest_framework.renderers.BrowsableAPIRenderer')
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    # ],
-    # TODO: enable authentication
-    'DEFAULT_AUTHENTICATION_CLASSES': [],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAdminUser'
     ],

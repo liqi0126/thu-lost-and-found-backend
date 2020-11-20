@@ -5,12 +5,14 @@ Django==3.1.2
 django-environ==0.4.5
 django-filter==2.4.0
 djangorestframework==3.12.1
+djangorestframework-simplejwt==4.6.0
 environs==9.2.0
 gunicorn==19.9.0
 marshmallow==3.9.1
 mysqlclient==2.0.1
 Pillow==8.0.1
 pycparser==2.20
+PyJWT==1.7.1
 PyMySQL==0.10.1
 python-dotenv==0.15.0
 pytz==2020.1
