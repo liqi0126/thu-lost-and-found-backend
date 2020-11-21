@@ -59,7 +59,7 @@ class UserRole(models.TextChoices):
 class UserInvitation(models.Model):
     role = models.CharField(max_length=3, choices=UserRole.choices, default=UserRole.USER)
     email = models.EmailField(unique=True, max_length=125, null=True, blank=True)
-    token = models.CharField(max_length=64, null=False, blank=False)
+    token = models.CharField(max_length=64, null=False, blank=False, unique=True)
     expiration_date = models.DateTimeField(null=False, blank=False)
 
     extra = models.JSONField(null=True, blank=True)
@@ -70,7 +70,7 @@ class UserInvitation(models.Model):
 class UserEmailVerification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='email_verification')
     email = models.EmailField(unique=True, max_length=125, null=True, blank=True)
-    token = models.CharField(max_length=64, null=False, blank=False)
+    token = models.CharField(max_length=64, null=False, blank=False, unique=True)
     expiration_date = models.DateTimeField(null=False, blank=False)
 
     extra = models.JSONField(null=True, blank=True)
