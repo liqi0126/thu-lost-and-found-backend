@@ -5,7 +5,6 @@ from django.conf.urls.static import static
 
 from rest_framework import routers
 
-from thu_lost_and_found_backend import authentication_service
 from thu_lost_and_found_backend.authentication_service.views import UserVerificationApplicationViewSet
 from thu_lost_and_found_backend.contact_service.views import ContactViewSet
 from thu_lost_and_found_backend.found_notice_service.views import FoundNoticeViewSet
