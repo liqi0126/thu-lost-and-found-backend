@@ -1,12 +1,13 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError
 from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from thu_lost_and_found_backend.helpers.toolkits import delete_instance_medias
 from thu_lost_and_found_backend.user_service.models import User, UserVerificationApplication, UserInvitation, \
@@ -32,6 +33,24 @@ class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
 class UserInvitationViewSet(viewsets.ModelViewSet):
     queryset = UserInvitation.objects.all()
     serializer_class = UserInvitationSerializer
+
+    def create(self, request, *args, **kwargs):
+
+        request.data['token'] = \
+            User.objects.make_random_password(length=64,
+                                              allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789')
+        if 'expiration_date' not in request.data:
+            request.data['expiration_date'] = datetime.now() + timedelta(weeks=2)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_create(serializer)
+
+        # TODO: Send invitation email
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @action(methods=['get', 'post'], url_path=r'register/(?P<token>[\w\d]+)', detail=False)
     def register(self, request, token):

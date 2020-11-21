@@ -58,7 +58,7 @@ class UserRole(models.TextChoices):
 
 class UserInvitation(models.Model):
     role = models.CharField(max_length=3, choices=UserRole.choices, default=UserRole.USER)
-    email = models.EmailField(unique=True, max_length=125, null=True, blank=True)
+    email = models.EmailField(unique=True, max_length=125, null=False, blank=False)
     token = models.CharField(max_length=64, null=False, blank=False, unique=True)
     expiration_date = models.DateTimeField(null=False, blank=False)
 
