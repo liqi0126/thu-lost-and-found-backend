@@ -1,6 +1,6 @@
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -31,12 +31,23 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
     queryset = UserInvitation.objects.all()
     serializer_class = UserInvitationSerializer
 
-    @staticmethod
-    def register(request, token):
+    @action(methods=['get', 'post'], url_path=r'register/(?P<token>[\w\d]+)', detail=False)
+    def register(self, request, token):
+
         if request.method == 'GET':
             invitation = get_object_or_404(UserInvitation, token=token)
             invitation_json = json.dumps(UserInvitationSerializer(invitation).data)
             return HttpResponse(invitation_json, content_type='application/json')
+
+        elif request.method == 'POST':
+            missing_fields = {}
+            for field in ["username", "password", "nickname", "document_number", "mobile", "email"]:
+                if field not in request.POST:
+                    missing_fields[field] = ['This field is required.']
+            if len(missing_fields) >= 1:
+                return HttpResponseBadRequest(json.dumps(missing_fields))
+        else:
+            return Http404()
 
 
 class UserEmailVerificationViewSet(viewsets.ModelViewSet):
