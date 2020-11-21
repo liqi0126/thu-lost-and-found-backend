@@ -13,7 +13,7 @@ class UserStatus(models.TextChoices):
 
 def avatar_upload_path(instance, filename):
     ext = filename.split('.')[-1]
-    filename = timestamp_filename(instance.name, ext)
+    filename = timestamp_filename(instance.username, ext)
     return f'user_avatars/{filename}'
 
 
