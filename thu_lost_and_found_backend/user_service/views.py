@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timedelta
 
 from django.contrib.auth.hashers import make_password
+from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
@@ -9,6 +10,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from thu_lost_and_found_backend import settings
 from thu_lost_and_found_backend.helpers.toolkits import delete_instance_medias
 from thu_lost_and_found_backend.user_service.models import User, UserVerificationApplication, UserInvitation, \
     UserEmailVerification
@@ -48,6 +50,11 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
 
         # TODO: Send invitation email
+        send_mail(subject='Subject here',
+                  message=f'Hello {request.data["token"]} ',
+                  from_email=f'"{settings.FROM_EMAIL}" <{settings.EMAIL_HOST_USER}>',
+                  recipient_list=[request.data['email']],
+                  fail_silently=False)
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
