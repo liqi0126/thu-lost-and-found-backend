@@ -18,10 +18,10 @@ def image_upload_path(instance, filename):
 
     if model_name == User.__name__:
         folder_name = 'user_avatars'
-        filename = timestamp_filename(instance.name, ext)
+        filename = timestamp_filename(instance.username, ext)
     elif model_name == UserVerificationApplication.__name__:
         folder_name = 'user_verification_application'
-        filename = timestamp_filename(f'user_{instance.user}_supporting_document', ext)
+        filename = timestamp_filename(f'user_{instance.user.username}_supporting_document', ext)
 
     return f'{folder_name}/{filename}'
 
@@ -29,7 +29,7 @@ def image_upload_path(instance, filename):
 class User(AbstractUser):
     # Inherited fields
     # id, password, username, first_name, last_name, email,
-    # is_superuser, is_staff, is_active, last_login,  date_joined
+    # is_superuser, is_staff, is_active, last_login, date_joined
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 

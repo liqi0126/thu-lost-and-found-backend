@@ -11,8 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'wechat_id', 'avatar', 'date_joined', 'contacts', 'is_staff',
-                  'is_superuser', 'status']
+        exclude = ['password', 'extra', 'created_at', 'updated_at']
 
 
 class UserVerificationApplicationSerializer(serializers.ModelSerializer):
