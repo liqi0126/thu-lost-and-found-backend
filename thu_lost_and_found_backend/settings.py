@@ -140,6 +140,17 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_PORT = 25
+
+EMAIL_HOST_USER = 'thu_lost_and_found@163.com'
+EMAIL_HOST_PASSWORD = 'TMGHFYDVFSTRTIYU'
+
+EMAIL_FROM = 'noreply@thu-lost-and-found.com'
+DEFAULT_FROM_EMAIL = 'thu_lost_and_found@163.com'
+
 DEFAULT_RENDERER_CLASSES = ['rest_framework.renderers.JSONRenderer']
 if DEBUG:
     DEFAULT_RENDERER_CLASSES.append('rest_framework.renderers.BrowsableAPIRenderer')
