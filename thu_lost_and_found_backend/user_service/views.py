@@ -1,4 +1,10 @@
+import json
+
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from thu_lost_and_found_backend.helpers.toolkits import delete_instance_medias
 from thu_lost_and_found_backend.user_service.models import User, UserVerificationApplication, UserInvitation, \
@@ -24,6 +30,13 @@ class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
 class UserInvitationViewSet(viewsets.ModelViewSet):
     queryset = UserInvitation.objects.all()
     serializer_class = UserInvitationSerializer
+
+    @staticmethod
+    def register(request, token):
+        if request.method == 'GET':
+            invitation = get_object_or_404(UserInvitation, token=token)
+            invitation_json = json.dumps(UserInvitationSerializer(invitation).data)
+            return HttpResponse(invitation_json, content_type='application/json')
 
 
 class UserEmailVerificationViewSet(viewsets.ModelViewSet):

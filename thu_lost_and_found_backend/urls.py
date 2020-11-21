@@ -23,13 +23,16 @@ router.register(r'tags', TagViewSet)
 router.register(r'found-notices', FoundNoticeViewSet)
 router.register(r'lost-notices', LostNoticeViewSet)
 router.register(r'users', UserViewSet)
-router.register(r'user-invites', UserInvitationViewSet)
+router.register(r'user-invitations', UserInvitationViewSet)
 router.register(r'user-email-verifications', UserEmailVerificationViewSet)
 router.register(r'user-verification-applications', UserVerificationApplicationViewSet)
 
 urlpatterns = [
+
+    path('', include('thu_lost_and_found_backend.user_service.urls')),
+    path('auth/', include('thu_lost_and_found_backend.authentication_service.urls')),
+
     path('', include(router.urls)),
-    path('auth/', include('thu_lost_and_found_backend.authentication_service.urls'))
 ]
 
 # image links
