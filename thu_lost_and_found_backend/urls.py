@@ -4,8 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from rest_framework import routers
-from rest_framework_simplejwt.views import (TokenObtainPairView,TokenRefreshView)
 
+from thu_lost_and_found_backend import authentication_service
 from thu_lost_and_found_backend.authentication_service.views import UserVerificationApplicationViewSet
 from thu_lost_and_found_backend.contact_service.views import ContactViewSet
 from thu_lost_and_found_backend.found_notice_service.views import FoundNoticeViewSet
@@ -29,8 +29,7 @@ router.register(r'user-verification-applications', UserVerificationApplicationVi
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/', include('thu_lost_and_found_backend.authentication_service.urls'))
 ]
 
 # image links
