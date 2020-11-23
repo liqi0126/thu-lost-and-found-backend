@@ -33,6 +33,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
     queryset = UserVerificationApplication.objects.all()
     serializer_class = UserVerificationApplicationSerializer
+    # TODO: implement this
 
 
 class UserInvitationViewSet(viewsets.ModelViewSet):
@@ -126,3 +127,4 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
 class UserEmailVerificationViewSet(viewsets.ModelViewSet):
     queryset = UserEmailVerification.objects.all()
     serializer_class = UserEmailVerificationSerializer
+    # TODO: implement this
