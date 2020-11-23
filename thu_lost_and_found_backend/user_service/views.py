@@ -63,8 +63,11 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
     def register(self, request, token):
         invitation = get_object_or_404(UserInvitation, token=token)
 
-        if request.method == 'GET':
+        if invitation.expiration_date <= datetime.now():
+            invitation.delete()
+            return Http404()
 
+        if request.method == 'GET':
             invitation_json = json.dumps(UserInvitationSerializer(invitation).data)
             return HttpResponse(invitation_json, content_type='application/json')
 
