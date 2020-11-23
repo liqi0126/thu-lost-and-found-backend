@@ -16,6 +16,7 @@ from thu_lost_and_found_backend.user_service.models import User, UserVerificatio
     UserEmailVerification
 from thu_lost_and_found_backend.user_service.serializer import UserSerializer, UserVerificationApplicationSerializer, \
     UserInvitationSerializer, UserEmailVerificationSerializer
+from .invitation_template import invitation_template
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -47,12 +48,24 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        # Check if user with that email exists
+        try:
+            User.objects.get(email=request.data['email'])
+            return HttpResponseBadRequest(f'User with this "{request.data["email"]}" email already exists.')
+        except User.DoesNotExist:
+            pass
+
         self.perform_create(serializer)
 
-        # TODO: Send invitation email
-        send_mail(subject='Subject here',
-                  message=f'Hello {request.data["token"]} ',
-                  from_email=f'"{settings.FROM_EMAIL}" <{settings.EMAIL_HOST_USER}>',
+        send_mail(subject='THU Lost-and-Found Invitation Link',
+                  message='',
+                  html_message=invitation_template.format(
+                      role=request.data['role'],
+                      invitation_link=f'{settings.APP_URL}/#/invitation/f{request.data["token"]}/',
+                      expiration_date=request.data['expiration_date'].strftime('%m-%d-%Y')
+                  ),
+
+                  from_email=f'"{settings.EMAIL_DISPLAY_NAME}" <{settings.EMAIL_HOST_USER}>',
                   recipient_list=[request.data['email']],
                   fail_silently=False)
 
