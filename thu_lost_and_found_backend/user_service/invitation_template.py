@@ -92,7 +92,7 @@ invitation_template = """
                                                             <td class="h1 pb25" style="color:#ffffff; font-family:'Muli', Arial,sans-serif; font-size:40px; line-height:46px; text-align:center; padding-bottom:25px;">Welcome</td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="text-center pb25" style="color:#c1cddc; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:30px; text-align:center; padding-bottom:25px;">Tsinghua University Lost-and-Found System. Role: {role}.<br>Please joined before {expiration_date}.</td>
+                                                            <td class="text-center pb25" style="color:#c1cddc; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:30px; text-align:center; padding-bottom:25px;">Tsinghua University Lost-and-Found System. Role: {role}.<br>Please join before {expiration_date}.</td>
                                                         </tr>
                                                         <!-- Button -->
                                                         <tr>
