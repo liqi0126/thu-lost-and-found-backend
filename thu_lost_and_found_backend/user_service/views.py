@@ -18,6 +18,7 @@ from thu_lost_and_found_backend.user_service.models import User, UserVerificatio
 from thu_lost_and_found_backend.user_service.serializer import UserSerializer, UserVerificationApplicationSerializer, \
     UserInvitationSerializer, UserEmailVerificationSerializer
 from .invitation_template import invitation_template
+from ..authentication_service.permission import SuperAdminOnlyPermission
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -37,6 +38,7 @@ class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
 class UserInvitationViewSet(viewsets.ModelViewSet):
     queryset = UserInvitation.objects.all()
     serializer_class = UserInvitationSerializer
+    permission_classes = [SuperAdminOnlyPermission]
 
     def create(self, request, *args, **kwargs):
 
