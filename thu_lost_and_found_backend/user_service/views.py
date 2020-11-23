@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
@@ -76,7 +77,7 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
     def register(self, request, token):
         invitation = get_object_or_404(UserInvitation, token=token)
 
-        if invitation.expiration_date <= datetime.now():
+        if invitation.expiration_date <= timezone.now():
             invitation.delete()
             return Http404()
 
