@@ -6,4 +6,6 @@ from . import views
 urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('wechat/token/', views.wechat_token, name='wechat_token_obtain_pair'),
+    path('wechat/token/refresh/', views.wechat_token_refresh, name='wechat_token_refresh'),
 ]
