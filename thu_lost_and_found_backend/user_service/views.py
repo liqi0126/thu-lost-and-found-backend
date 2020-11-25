@@ -1,18 +1,18 @@
 import json
 from datetime import datetime, timedelta
-from django.utils import timezone
 
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from thu_lost_and_found_backend import settings
-from thu_lost_and_found_backend.helpers.toolkits import delete_instance_medias
+from thu_lost_and_found_backend.helpers.toolkits import delete_instance_medias, check_missing_fields
 from thu_lost_and_found_backend.user_service.models import User, UserVerificationApplication, UserInvitation, \
     UserEmailVerification
 from thu_lost_and_found_backend.user_service.serializer import UserSerializer, UserVerificationApplicationSerializer, \
@@ -89,12 +89,9 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
             return HttpResponse(invitation_json, content_type='application/json')
 
         elif request.method == 'POST':
-            missing_fields = {}
             contents = json.loads(request.body)
-            for field in ["username", "password", "first_name", "last_name"]:
-                if field not in contents:
-                    missing_fields[field] = ['This field is required.']
-            if len(missing_fields) >= 1:
+            missing_fields = check_missing_fields(contents, ["username", "password", "first_name", "last_name"])
+            if missing_fields:
                 return HttpResponseBadRequest(json.dumps(missing_fields))
 
             try:
