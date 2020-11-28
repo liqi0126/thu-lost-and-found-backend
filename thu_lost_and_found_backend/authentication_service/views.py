@@ -50,8 +50,8 @@ def wechat_token(request):
 
     response = response.json()
 
-    if response['errcode'] != 1:
-        return HttpResponseBadRequest('Invalid code')
+    if 'errcode' in response:
+        return HttpResponseBadRequest('Invalid code or wechat\'s server error.')
 
     open_id = response['openid']
 
