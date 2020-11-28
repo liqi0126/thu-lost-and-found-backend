@@ -4,6 +4,7 @@ from datetime import datetime
 import requests
 from django.contrib.auth.hashers import make_password
 from django.http import Http404, HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from thu_lost_and_found_backend import settings
@@ -26,6 +27,7 @@ def create_user_base_on_wechat(open_id):
     )
 
 
+@csrf_exempt
 def wechat_token(request):
     if request.method != 'POST':
         return Http404()
