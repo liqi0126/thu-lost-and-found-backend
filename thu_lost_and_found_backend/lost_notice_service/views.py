@@ -1,7 +1,6 @@
 import json
 
-from django.http import HttpResponseBadRequest, HttpResponse
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponseBadRequest, JsonResponse
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
@@ -32,7 +31,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
 
         if len(request.FILES) != 0:
             images_url = save_uploaded_images(request, 'lost_notice_images', model=LostNotice)
-            request.data['images'] = json.dumps(images_url)
+            request.data['images'] = json.dumps({"images_url": images_url})
             # Update serializer
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
@@ -47,11 +46,10 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
 
     # TODO: update json images
 
-    @action(detail=True, methods=['post'], url_path='upload-image')
-    def upload_image(self, request, pk=None):
-        notice = get_object_or_404(LostNotice, pk=pk)
-
-        if save_uploaded_images(request, 'lost_notice_images', notice):
-            return HttpResponse('Upload success.')
+    @action(detail=True, methods=['post'], url_path='upload-image/')
+    def upload_image(self, request):
+        result = save_uploaded_images(request, 'lost_notice_images', LostNotice)
+        if result:
+            return JsonResponse(result, safe=False)
         else:
             return HttpResponseBadRequest()

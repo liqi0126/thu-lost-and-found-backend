@@ -56,10 +56,9 @@ def delete_instance_medias(instance, media_attributes, json=False):
                 delete_media_file(url[start_index:])
 
 
-def save_uploaded_images(request, upload_to, instance=None, model=None):
+def save_uploaded_images(request, upload_to, model):
     """
-    Save images as urls in json in database
-    @return: True if success, False if fail
+    @return: An array of images' absolute url if success, False if fail
     """
 
     # /media/
@@ -71,12 +70,9 @@ def save_uploaded_images(request, upload_to, instance=None, model=None):
 
     result = []
 
-    if instance:
-        instance_id = instance.id
-    else:
-        id_max = model.objects.all().aggregate(Max('id'))['id__max']
-        id_next = id_max + 1 if id_max else 1
-        instance_id = id_next
+    id_max = model.objects.all().aggregate(Max('id'))['id__max']
+    id_next = id_max + 1 if id_max else 1
+    instance_id = id_next
 
     try:
         for filename, file in request.FILES.items():
@@ -96,17 +92,6 @@ def save_uploaded_images(request, upload_to, instance=None, model=None):
             file_abs_url = k_app_url + k_media_url + f'{upload_to}/' + save_file_name
 
             result.append(file_abs_url)
-
-        if instance:
-            # Update instance's database
-            if not instance.images:
-                instance_images = {'image_urls': []}
-            else:
-                instance_images = instance.images
-
-            instance_images['image_urls'].extend(result)
-            instance.images = instance_images
-            instance.save()
 
         return result
 
