@@ -24,7 +24,7 @@ class PropertyTypeSerializer(serializers.ModelSerializer):
 
 class PropertySerializer(serializers.ModelSerializer):
     template_queryset = PropertyTemplate.objects.all()
-    template = serializers.PrimaryKeyRelatedField(queryset=template_queryset)
+    template = serializers.SlugRelatedField(queryset=template_queryset, slug_field='name')
     tags = TagSimpleSerializer(many=True)
 
     def create(self, validated_data):

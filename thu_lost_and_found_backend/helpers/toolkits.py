@@ -47,6 +47,9 @@ def delete_instance_medias(instance, media_attributes, json=False):
             delete_media_file(url)
         else:
             image_abs_urls = getattr(instance, attribute)
+            if not image_abs_urls:
+                return
+            image_abs_urls = image_abs_urls['image_urls']
             for image_abs_url in image_abs_urls:
                 url = image_abs_url
                 start_index = url.find(settings.MEDIA_URL)
