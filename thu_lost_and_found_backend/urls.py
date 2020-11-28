@@ -29,6 +29,7 @@ router.register(r'user-verification-applications', UserVerificationApplicationVi
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('admin/', admin.site.urls),
     path('auth/', include('thu_lost_and_found_backend.authentication_service.urls'))
 ]
 

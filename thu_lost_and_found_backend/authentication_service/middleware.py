@@ -14,8 +14,12 @@ class JWTAuthenticationMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        request.user = authentication.JWTAuthentication().authenticate(request)
-        request.user = request.user[0] if request.user else AnonymousUser()
+        # If user is not authenticated with django auth system
+        # Check its JWT
+        if not request.user.is_authenticated:
+            request.user = authentication.JWTAuthentication().authenticate(request)
+            request.user = request.user[0] if request.user else AnonymousUser()
+
         response = self.get_response(request)
         return response
 
