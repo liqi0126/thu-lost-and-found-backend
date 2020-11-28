@@ -3,7 +3,7 @@ from datetime import datetime
 
 import requests
 from django.contrib.auth.hashers import make_password
-from django.http import Http404, HttpResponseBadRequest
+from django.http import Http404, HttpResponseBadRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -62,7 +62,7 @@ def wechat_token(request):
 
     refresh = RefreshToken.for_user(user)
 
-    return {
+    return JsonResponse({
         'refresh': str(refresh),
         'access': str(refresh.access_token),
-    }
+    })
