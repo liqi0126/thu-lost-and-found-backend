@@ -18,13 +18,13 @@ from thu_lost_and_found_backend.user_service.models import User, UserVerificatio
 from thu_lost_and_found_backend.user_service.serializer import UserSerializer, UserVerificationApplicationSerializer, \
     UserInvitationSerializer, UserEmailVerificationSerializer
 from .invitation_template import invitation_template
-from ..authentication_service.permission import SuperAdminOnlyPermission, AdminOnlyExceptUserMeActionPermission
+from ..authentication_service.permission import SuperAdminOnlyPermission, UserPermission
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AdminOnlyExceptUserMeActionPermission]
+    permission_classes = [UserPermission]
 
     def perform_destroy(self, instance):
         delete_instance_medias(instance, 'avatar')
