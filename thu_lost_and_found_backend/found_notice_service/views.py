@@ -44,7 +44,7 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
 
     # TODO: update json images
 
-    @action(detail=True, methods=['post'], url_path='upload-image/')
+    @action(detail=False, methods=['post'], url_path=r'upload-image')
     def upload_image(self, request):
         result = save_uploaded_images(request, 'found_notice_images', FoundNotice)
         if result:

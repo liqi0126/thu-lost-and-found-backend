@@ -46,7 +46,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
 
     # TODO: update json images
 
-    @action(detail=True, methods=['post'], url_path='upload-image/')
+    @action(detail=False, methods=['post'], url_path=r'upload-image')
     def upload_image(self, request):
         result = save_uploaded_images(request, 'lost_notice_images', LostNotice)
         if result:
