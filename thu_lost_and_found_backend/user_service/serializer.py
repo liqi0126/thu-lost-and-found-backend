@@ -14,6 +14,14 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ['password', 'extra', 'created_at', 'updated_at']
 
 
+class UserSimpleSerializer(serializers.ModelSerializer):
+    queryset = User.objects.all()
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'avatar', 'is_verified', 'status']
+
+
 class UserVerificationApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserVerificationApplication
