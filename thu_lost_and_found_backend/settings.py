@@ -1,8 +1,8 @@
-from pathlib import Path
-from environs import Env
 import os
+from pathlib import Path
 
 import pymysql
+from environs import Env
 
 pymysql.version_info = (1, 4, 0, "final", 0)
 pymysql.install_as_MySQLdb()
@@ -61,6 +61,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'thu_lost_and_found_backend.authentication_service.middleware.JWTAuthenticationMiddleware',
+    'thu_lost_and_found_backend.authentication_service.middleware.NoticesAuthorizationMiddleware'
 ]
 
 ROOT_URLCONF = 'thu_lost_and_found_backend.urls'
@@ -145,14 +148,13 @@ if DEBUG:
     DEFAULT_RENDERER_CLASSES.append('rest_framework.renderers.BrowsableAPIRenderer')
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    # ],
-    # TODO: enable authentication
-    'DEFAULT_AUTHENTICATION_CLASSES': [],
-    'DEFAULT_PERMISSION_CLASSES': [],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser'
+    ],
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework.filters.OrderingFilter',
@@ -163,3 +165,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
+
+EMAIL_BACKEND = env('EMAIL_BACKEND')
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+EMAIL_DISPLAY_NAME = env('EMAIL_DISPLAY_NAME')
+
+WECHAT_APP_ID = env('WECHAT_APP_ID')
+WECHAT_APP_SECRET = env('WECHAT_APP_SECRET')

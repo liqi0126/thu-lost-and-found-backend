@@ -1,13 +1,23 @@
 import errno
 import os
 import time
+
 from PIL import Image
 from django.conf import settings
 from django.db.models import Max
 
-from django.shortcuts import get_object_or_404
-
 from thu_lost_and_found_backend.settings import BASE_DIR
+
+
+def check_missing_fields(contents, fields: list):
+    missing_fields = {}
+    for field in fields:
+        if field not in contents:
+            missing_fields[field] = ['This field is required.']
+    if len(missing_fields) >= 1:
+        return missing_fields
+    else:
+        return None
 
 
 def timestamp_filename(file_name, file_extension):
