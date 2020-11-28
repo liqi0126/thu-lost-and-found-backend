@@ -16,3 +16,4 @@ python-dotenv==0.15.0
 pytz==2020.1
 six==1.15.0
 sqlparse==0.4.1
+jieba==0.42.1
