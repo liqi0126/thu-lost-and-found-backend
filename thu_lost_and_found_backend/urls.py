@@ -11,13 +11,16 @@ from thu_lost_and_found_backend.lost_notice_service.views import LostNoticeViewS
 from thu_lost_and_found_backend.property_service.views import PropertyTypeViewSet, PropertyTemplateViewSet, \
     PropertyViewSet
 from thu_lost_and_found_backend.tag_service.views import TagViewSet
-from thu_lost_and_found_backend.user_service.views import UserViewSet, UserInvitationViewSet, \
+from thu_lost_and_found_backend.user_service.views import UserInvitationViewSet, \
     UserEmailVerificationViewSet, UserVerificationApplicationViewSet
+from thu_lost_and_found_backend.user_service.views import UserViewSet
+from thu_lost_and_found_backend.matching_service.views import MatchingEntryViewSet
 
 router = routers.DefaultRouter()
 router.register(r'property-types', PropertyTypeViewSet)
 router.register(r'property-templates', PropertyTemplateViewSet)
 router.register(r'properties', PropertyViewSet)
+router.register(r'matching-entries', MatchingEntryViewSet)
 router.register(r'contacts', ContactViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'found-notices', FoundNoticeViewSet)
@@ -29,6 +32,7 @@ router.register(r'user-verification-applications', UserVerificationApplicationVi
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('admin/', admin.site.urls),
     path('auth/', include('thu_lost_and_found_backend.authentication_service.urls'))
 ]
 

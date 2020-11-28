@@ -31,7 +31,7 @@ class User(AbstractUser):
     # id, password, username, first_name, last_name, email,
     # is_superuser, is_staff, is_active, last_login, date_joined
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     username = models.CharField(max_length=125)
     email = models.EmailField(unique=True, max_length=125, null=True, blank=True)

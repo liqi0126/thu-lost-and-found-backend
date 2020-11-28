@@ -3,7 +3,8 @@ from datetime import datetime
 
 import requests
 from django.contrib.auth.hashers import make_password
-from django.http import Http404, HttpResponseBadRequest
+from django.http import Http404, HttpResponseBadRequest, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from thu_lost_and_found_backend import settings
@@ -26,6 +27,7 @@ def create_user_base_on_wechat(open_id):
     )
 
 
+@csrf_exempt
 def wechat_token(request):
     if request.method != 'POST':
         return Http404()
@@ -48,8 +50,8 @@ def wechat_token(request):
 
     response = response.json()
 
-    if response['errcode'] != 1:
-        return HttpResponseBadRequest('Invalid code')
+    if 'errcode' in response:
+        return HttpResponseBadRequest('Invalid code or wechat\'s server error.')
 
     open_id = response['openid']
 
@@ -60,7 +62,7 @@ def wechat_token(request):
 
     refresh = RefreshToken.for_user(user)
 
-    return {
+    return JsonResponse({
         'refresh': str(refresh),
         'access': str(refresh.access_token),
-    }
+    })

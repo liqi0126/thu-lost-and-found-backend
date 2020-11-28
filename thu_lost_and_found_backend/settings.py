@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'thu_lost_and_found_backend.property_service.apps.PropertyServiceConfig',
     'thu_lost_and_found_backend.user_service.apps.UserServiceConfig',
     'thu_lost_and_found_backend.tag_service.apps.TagServiceConfig',
+    'thu_lost_and_found_backend.matching_service.apps.MatchingServiceConfig',
 
     'rest_framework',
 ]
@@ -142,6 +143,17 @@ STATIC_URL = '/static/'
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_PORT = 25
+
+EMAIL_HOST_USER = 'thu_lost_and_found@163.com'
+EMAIL_HOST_PASSWORD = 'TMGHFYDVFSTRTIYU'
+
+EMAIL_FROM = 'noreply@thu-lost-and-found.com'
+DEFAULT_FROM_EMAIL = 'thu_lost_and_found@163.com'
 
 DEFAULT_RENDERER_CLASSES = ['rest_framework.renderers.JSONRenderer']
 if DEBUG:
