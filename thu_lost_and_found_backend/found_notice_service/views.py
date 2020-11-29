@@ -17,7 +17,7 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
     serializer_class = FoundNoticeSerializer
     pagination_class = CursorPagination
     ordering = ['-updated_at']
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     # TODO: Custom property type, templates, author filter
     filterset_fields = ['description', 'status', 'found_datetime', 'found_location']
     search_fields = ['description', 'status', 'found_datetime', 'found_location']
@@ -37,6 +37,9 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, *args, **kwargs):
+        pass
 
     def perform_destroy(self, instance):
         delete_instance_medias(instance, 'images', json=True)

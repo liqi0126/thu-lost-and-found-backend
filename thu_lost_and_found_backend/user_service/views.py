@@ -24,7 +24,7 @@ from ..authentication_service.permission import SuperAdminOnlyPermission, UserPe
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [UserPermission]
+#    permission_classes = [UserPermission]
 
     def perform_destroy(self, instance):
         delete_instance_medias(instance, 'avatar')
@@ -45,7 +45,7 @@ class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
 class UserInvitationViewSet(viewsets.ModelViewSet):
     queryset = UserInvitation.objects.all()
     serializer_class = UserInvitationSerializer
-    permission_classes = [SuperAdminOnlyPermission]
+#    permission_classes = [SuperAdminOnlyPermission]
 
     def create(self, request, *args, **kwargs):
 

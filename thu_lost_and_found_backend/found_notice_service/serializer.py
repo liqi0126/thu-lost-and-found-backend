@@ -30,6 +30,7 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
         user = User.objects.get(pk=1)
         found_notice = FoundNotice.objects.create(**validated_data, property=_property, author=user)
 
+        # TODO: threading
         # matching
         lost_notices = LostNotice.objects.filter(status=FoundNoticeStatus.OPEN, property__template=found_notice.property.template)
         for lost_notice in lost_notices:
@@ -44,7 +45,13 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
         found_notice.save()
         return found_notice
 
-    # TODO: update
+    # def update(self, instance, validated_data):
+    #     print(instance)
+    #     contacts_data = validated_data.pop('contacts')
+    #     _property_data = validated_data.pop('property')
+    #
+    #     for contact_data in contacts_data:
+    #         pass
 
     class Meta:
         model = FoundNotice
