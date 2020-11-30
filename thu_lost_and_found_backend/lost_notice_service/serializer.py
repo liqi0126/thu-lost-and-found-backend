@@ -36,7 +36,7 @@ class LostNoticeSerializer(serializers.ModelSerializer):
         lost_notice.save()
 
         # matching
-        found_notices = FoundNotice.objects.filter(status=FoundNoticeStatus.OPEN,
+        found_notices = FoundNotice.objects.filter(status=FoundNoticeStatus.PUBLIC,
                                                    property__template=lost_notice.property.template)
         for found_notice in found_notices:
             matching_degree = matching(lost_notice, found_notice)

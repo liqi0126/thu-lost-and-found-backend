@@ -23,8 +23,9 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
     search_fields = ['description', 'status', 'found_datetime', 'found_location']
 
     def create(self, request, *args, **kwargs):
+        # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        request.data['extra'] = '{"author":1}'
 
-        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -41,7 +42,21 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
-        pass
+        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        if len(request.FILES) != 0:
+            images_url = save_uploaded_images(request, 'found_notice_images', model=FoundNotice)
+            request.data['images'] = json.dumps({"images_url": images_url})
+            # Update serializer
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+        self.perform_update(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
 
     def perform_destroy(self, instance):
         delete_instance_medias(instance, 'images', json=True)
