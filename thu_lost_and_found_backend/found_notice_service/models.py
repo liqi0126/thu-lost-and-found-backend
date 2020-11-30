@@ -7,7 +7,7 @@ from thu_lost_and_found_backend.user_service.models import User
 
 class FoundNoticeStatus(models.TextChoices):
     RETURN = 'RET', _('Return')
-    OPEN = 'OPN', _('Open')
+    PUBLIC = 'PUB', _('Public')
     CLOSE = 'CLS', _('Close')
     DRAFT = 'DFT', _('Draft')
 
@@ -23,7 +23,7 @@ class FoundNotice(models.Model):
     quizzes = models.JSONField(null=True, blank=True)
     contacts = models.ManyToManyField(Contact, related_name='found_notices', default=None)
 
-    status = models.CharField(max_length=3, choices=FoundNoticeStatus.choices, default=FoundNoticeStatus.OPEN)
+    status = models.CharField(max_length=3, choices=FoundNoticeStatus.choices, default=FoundNoticeStatus.PUBLIC)
 
     return_user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None, null=True, blank=True,
                                     related_name='returned_property_notices')
