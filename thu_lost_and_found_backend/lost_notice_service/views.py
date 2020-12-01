@@ -50,8 +50,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
-        # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":1}'
+        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
 
         if len(request.FILES) != 0:
             images_url = save_uploaded_images(request, 'lost_notice_images', instance_id=instance.id)
