@@ -31,6 +31,11 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
         author = User.objects.get(pk=author_id)
         found_notice = FoundNotice.objects.create(**validated_data, property=_property, author=author)
 
+        for contact_data in contacts_data:
+            contact, created = Contact.objects.get_or_create(**contact_data)
+            found_notice.contacts.add(contact)
+        found_notice.save()
+
         # TODO: threading
         # matching
         lost_notices = LostNotice.objects.filter(status=LostNoticeStatus.PUBLIC, property__template=found_notice.property.template)
@@ -39,30 +44,38 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
             matching_entry = MatchingEntry.objects.create(lost_notice=lost_notice, found_notice=found_notice, matching_degree=matching_degree)
             matching_entry.save()
 
-        for contact_data in contacts_data:
-            contact, created = Contact.objects.get_or_create(**contact_data)
-            found_notice.contacts.add(contact)
-
-        found_notice.save()
-
-        # matching
-        lost_notices = LostNotice.objects.filter(status=LostNoticeStatus.PUBLIC,
-                                                 property__template=found_notice.property.template)
-        for lost_notice in lost_notices:
-            matching_degree = matching(lost_notice, found_notice)
-            matching_entry = MatchingEntry.objects.create(lost_notice=lost_notice, found_notice=found_notice,
-                                                          matching_degree=matching_degree)
-            matching_entry.save()
-
         return found_notice
 
     def update(self, instance, validated_data):
-        print(instance)
+        author_id = json.loads(validated_data.pop('extra'))['author']
         contacts_data = validated_data.pop('contacts')
         _property_data = validated_data.pop('property')
+        _property = PropertySerializer().update(instance.property, _property_data)
 
+        found_notice = serializers.ModelSerializer.update(self, instance, validated_data)
+        found_notice.author = User.objects.get(id=author_id)
+
+        # TODO: optimization ?
+        # clean old notices
+        for contact in found_notice.contacts.all():
+            if contact.found_notices.count() == 1:
+                contact.delete()
+        found_notice.contacts.clear()
+
+        # add new contacts
         for contact_data in contacts_data:
-            pass
+            contact, created = Contact.objects.get_or_create(**contact_data)
+            found_notice.contacts.add(contact)
+        found_notice.save()
+
+        # TODO: threading
+        # matching
+        for matching_entry in MatchingEntry.objects.filter(found_notice=found_notice):
+            matching_degree = matching(matching_entry.lost_notice, found_notice)
+            matching_entry.matching_degree = matching_degree
+            matching_entry.save()
+
+        return found_notice
 
     class Meta:
         model = FoundNotice

@@ -4,7 +4,6 @@ import time
 
 from PIL import Image
 from django.conf import settings
-from django.db.models import Max
 
 from thu_lost_and_found_backend.settings import BASE_DIR
 
@@ -56,7 +55,7 @@ def delete_instance_medias(instance, media_attributes, json=False):
                 delete_media_file(url[start_index:])
 
 
-def save_uploaded_images(request, upload_to, model):
+def save_uploaded_images(request, upload_to, instance_id):
     """
     @return: An array of images' absolute url if success, False if fail
     """
@@ -69,10 +68,6 @@ def save_uploaded_images(request, upload_to, model):
     k_app_url = settings.APP_URL
 
     result = []
-
-    id_max = model.objects.all().aggregate(Max('id'))['id__max']
-    id_next = id_max + 1 if id_max else 1
-    instance_id = id_next
 
     try:
         for filename, file in request.FILES.items():

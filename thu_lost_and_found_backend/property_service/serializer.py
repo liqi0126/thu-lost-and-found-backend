@@ -36,7 +36,23 @@ class PropertySerializer(serializers.ModelSerializer):
         _property.save()
         return _property
 
-    # TODO: update
+    def update(self, instance, validated_data):
+        tags_data = validated_data.pop('tags')
+        _property = serializers.ModelSerializer.update(self, instance, validated_data)
+
+        # TODO: optimization?
+        # clean old tag
+        for tag in _property.tags.all():
+            if tag.properties.count() == 1:
+                tag.delete()
+        _property.tags.clear()
+
+        # add new tag
+        for tag_data in tags_data:
+            tag, created = Tag.objects.get_or_create(**tag_data)
+            _property.tags.add(tag)
+        _property.save()
+        return _property
 
     class Meta:
         model = Property

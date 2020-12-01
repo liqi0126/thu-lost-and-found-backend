@@ -1,4 +1,5 @@
 import json
+from django.db.models import Max
 
 from django.http import HttpResponseBadRequest, JsonResponse
 from rest_framework import viewsets, status
@@ -26,37 +27,42 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
         request.data['extra'] = '{"author":1}'
 
+        if len(request.FILES) != 0:
+            id_max = FoundNotice.objects.all().aggregate(Max('id'))['id__max']
+            instance_id = id_max + 1 if id_max else 1
+            images_url = save_uploaded_images(request, 'found_notice_images', instance_id=instance_id)
+            request.data['images'] = json.dumps({"images_url": images_url})
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        if len(request.FILES) != 0:
-            images_url = save_uploaded_images(request, 'found_notice_images', model=FoundNotice)
-            request.data['images'] = json.dumps({"images_url": images_url})
-            # Update serializer
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
 
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
-        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
 
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        request.data['extra'] = '{"author":1}'
 
         if len(request.FILES) != 0:
-            images_url = save_uploaded_images(request, 'found_notice_images', model=FoundNotice)
+            images_url = save_uploaded_images(request, 'found_notice_images', instance_id=instance.id)
+            if instance.images is not None:
+                images_url += instance.images
             request.data['images'] = json.dumps({"images_url": images_url})
-            # Update serializer
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
 
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
 
     def perform_destroy(self, instance):
         delete_instance_medias(instance, 'images', json=True)
