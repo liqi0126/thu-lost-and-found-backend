@@ -63,8 +63,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'thu_lost_and_found_backend.authentication_service.middleware.JWTAuthenticationMiddleware',
-    'thu_lost_and_found_backend.authentication_service.middleware.NoticesAuthorizationMiddleware'
+    # 'thu_lost_and_found_backend.authentication_service.middleware.JWTAuthenticationMiddleware',
+    # 'thu_lost_and_found_backend.authentication_service.middleware.NoticesAuthorizationMiddleware'
 ]
 
 ROOT_URLCONF = 'thu_lost_and_found_backend.urls'
@@ -164,9 +164,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAdminUser'
-    # ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.IsAdminUser'
+        'rest_framework.permissions.AllowAny'
+    ],
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework.filters.OrderingFilter',
