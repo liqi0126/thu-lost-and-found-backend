@@ -12,13 +12,13 @@ from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
 
 from thu_lost_and_found_backend.helpers.match import matching
-from thu_lost_and_found_backend.user_service.serializer import UserSimpleSerializer
+from thu_lost_and_found_backend.user_service.serializer import UserSerializer
 
 
 class FoundNoticeSerializer(serializers.ModelSerializer):
     contacts = ContactSimpleSerializer(many=True)
     property = PropertySerializer()
-    author = UserSimpleSerializer(read_only=True)
+    author = UserSerializer(read_only=True)
     matching_entries = MatchingEntrySerializer(many=True, read_only=True)
 
     # TODO: quizzes
@@ -48,6 +48,7 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         author_id = json.loads(validated_data.pop('extra'))['author']
+
         contacts_data = validated_data.pop('contacts')
         _property_data = validated_data.pop('property')
         _property = PropertySerializer().update(instance.property, _property_data)
