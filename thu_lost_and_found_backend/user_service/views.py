@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.http import HttpResponse, Http404, HttpResponseBadRequest
+from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import viewsets, status
@@ -167,3 +167,19 @@ class UserEmailVerificationViewSet(viewsets.ModelViewSet):
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    @action(methods=['get'], url_path=r'verify/(?P<token>[\w\d]+)', detail=False)
+    def verify_user(self, request, token):
+        verification_entry = get_object_or_404(UserEmailVerification, token=token)
+
+        if verification_entry.expiration_date <= timezone.now():
+            verification_entry.delete()
+            return Http404()
+
+        username = verification_entry.user.username
+        verification_entry.user.is_verified = True
+        verification_entry.user.save()
+        # Remove verification_entry after verification of user
+        verification_entry.delete()
+
+        return HttpResponseRedirect(f'{settings.APP_URL}/#/verified/{username}/')
