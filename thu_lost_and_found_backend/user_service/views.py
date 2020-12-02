@@ -41,8 +41,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
     queryset = UserVerificationApplication.objects.all()
     serializer_class = UserVerificationApplicationSerializer
-    #    permission_classes = [UserPermission]
-    # TODO: implement this
+    #    permission_classes = [IsAdminUser]
 
 
 class UserInvitationViewSet(viewsets.ModelViewSet):
@@ -111,7 +110,7 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
                     last_name=contents['last_name'],
                     is_verified=False,
                     status='ACT',
-                    is_staff=True if invitation.role == 'STF' else False,
+                    is_staff=True if invitation.role == 'STF' or invitation.role == 'ADM' else False,
                     is_superuser=True if invitation.role == 'ADM' else False,
                     date_joined=datetime.now()
                 )
