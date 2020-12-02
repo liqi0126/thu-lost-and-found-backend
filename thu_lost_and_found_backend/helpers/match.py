@@ -2,15 +2,15 @@ import jieba
 import numpy as np
 import math
 
-NTC_LOC_WT = 2
-NTC_TIME_WT = 5
-NTC_DESC_WT = 10
-NTC_EXTRA_WT = 1
+NTC_LOC_WT = 2  # notice_location_weight
+NTC_TIME_WT = 5  # notice_time_weight
+NTC_DESC_WT = 10  # notice_description_weight
+NTC_EXTRA_WT = 1  # notice_extra_weight
 
-PROP_ATR_WT = 10
-PROP_TAG_WT = 5
-PROP_DESC_WT = 10
-PROP_EXTRA_WT = 1
+PROP_ATR_WT = 10  # property_attribute_weight
+PROP_TAG_WT = 5  # property_tag_weight
+PROP_DESC_WT = 10  # property_description_weight
+PROP_EXTRA_WT = 1  # property_extra_weight
 
 
 def sigmoid(x):
