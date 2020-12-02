@@ -24,7 +24,8 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
     search_fields = ['description', 'status', 'found_datetime', 'found_location']
 
     def create(self, request, *args, **kwargs):
-        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        request.data['extra'] = '{"author":1}'
 
         if len(request.FILES) != 0:
             id_max = FoundNotice.objects.all().aggregate(Max('id'))['id__max']
@@ -43,7 +44,8 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
-        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        request.data['extra'] = '{"author":1}'
 
         if len(request.FILES) != 0:
             images_url = save_uploaded_images(request, 'found_notice_images', instance_id=instance.id)
