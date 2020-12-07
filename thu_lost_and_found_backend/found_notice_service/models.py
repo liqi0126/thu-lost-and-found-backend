@@ -26,7 +26,7 @@ class FoundNotice(models.Model):
     status = models.CharField(max_length=3, choices=FoundNoticeStatus.choices, default=FoundNoticeStatus.PUBLIC)
 
     return_user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None, null=True, blank=True,
-                                    related_name='returned_property_notices')
+                                    related_name='returned_lost_property_notices')
     return_datetime = models.DateTimeField(null=True, blank=True)
 
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='found_notice')

@@ -1,11 +1,9 @@
 import json
-from django.db.models import Max
 
-from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
+from django.db.models import Max
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, delete_instance_medias
@@ -18,12 +16,16 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
     serializer_class = LostNoticeSerializer
     pagination_class = CursorPagination
     ordering = ['-updated_at']
-    # permission_classes = [IsAuthenticatedOrReadOnly]
-    # TODO: Custom property type, templates, author filter
-    filterset_fields = ['description', 'status', 'est_lost_start_datetime', 'est_lost_end_datetime', 'lost_location',
-                        'reward']
-    search_fields = ['description', 'status', 'est_lost_start_datetime', 'est_lost_end_datetime', 'lost_location',
-                     'reward']
+    # permission_classes = [NoticePermission]
+
+    filterset_fields = ['status', 'est_lost_start_datetime', 'est_lost_end_datetime',
+                        'lost_location', 'updated_at', 'created_at',
+                        'property__template', 'property__template__type__name', 'property__tags__name',
+                        'author__username']
+
+    search_fields = ['description', 'lost_location', 'reward',
+                     'property__name', 'property__description', 'property__tags__name',
+                     'author__username', 'extra']
 
     def create(self, request, *args, **kwargs):
 
@@ -75,7 +77,6 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         delete_instance_medias(instance, 'images', json=True)
         instance.delete()
 
-
     # TODO: update json images
     @action(detail=False, methods=['post'], url_path=r'upload-image')
     def upload_image(self, request):
@@ -88,5 +89,3 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         result = save_uploaded_images(request, 'lost_notice_images', instance_id=instance_id)
         if result:
             return Response({'url': result})
-        else:
-            return HttpResponseBadRequest()

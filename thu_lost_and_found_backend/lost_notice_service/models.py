@@ -28,7 +28,7 @@ class LostNotice(models.Model):
     status = models.CharField(max_length=3, choices=LostNoticeStatus.choices, default=LostNoticeStatus.PUBLIC)
 
     found_user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None, null=True, blank=True,
-                                   related_name='found_property_notices')
+                                   related_name='found_lost_property_notices')
     found_datetime = models.DateTimeField(null=True, blank=True)
 
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lost_notice')
