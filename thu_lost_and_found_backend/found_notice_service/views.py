@@ -78,8 +78,8 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
             id_max = FoundNotice.objects.all().aggregate(Max('id'))['id__max']
             instance_id = id_max + 1 if id_max else 1
 
-        result = {'images': save_uploaded_images(request, 'found_notice_images', instance_id=instance_id)}
-        if result['images']:
-            return JsonResponse(result, safe=False)
+        result = save_uploaded_images(request, 'found_notice_images', instance_id=instance_id)
+        if result:
+            return Response({'result': result})
         else:
             return HttpResponseBadRequest()
