@@ -12,13 +12,13 @@ from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
 
 from thu_lost_and_found_backend.helpers.match import matching
-from thu_lost_and_found_backend.user_service.serializer import UserSerializer
+from thu_lost_and_found_backend.user_service.serializer import UserSimpleSerializer
 
 
 class FoundNoticeSerializer(serializers.ModelSerializer):
     contacts = ContactSimpleSerializer(many=True)
     property = PropertySerializer()
-    author = UserSerializer(read_only=True)
+    author = UserSimpleSerializer(read_only=True)
     matching_entries = MatchingEntrySerializer(many=True, read_only=True)
 
     # TODO: quizzes
