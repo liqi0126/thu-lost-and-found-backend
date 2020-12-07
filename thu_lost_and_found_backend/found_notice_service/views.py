@@ -2,11 +2,13 @@ import json
 from django.db.models import Max
 
 from django.http import HttpResponseBadRequest, HttpResponse
+from django.core.serializers.json import Serializer
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+
 
 from thu_lost_and_found_backend.found_notice_service.models import FoundNotice
 from thu_lost_and_found_backend.found_notice_service.serializer import FoundNoticeSerializer
@@ -70,8 +72,6 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         delete_instance_medias(instance, 'images', json=True)
         instance.delete()
 
-    # TODO: update json images
-
     @action(detail=False, methods=['post'], url_path=r'upload-image')
     def upload_image(self, request):
         if 'id' in request.data:
@@ -82,6 +82,6 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
 
         result = save_uploaded_images(request, 'found_notice_images', instance_id=instance_id)
         if result:
-            return HttpResponse({'result': result}, content_type='application/json')
+            return Response(Serializer().serialize({'result': result}))
         else:
             return HttpResponseBadRequest()

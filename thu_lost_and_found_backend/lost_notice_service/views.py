@@ -2,6 +2,7 @@ import json
 from django.db.models import Max
 
 from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
+from django.core.serializers.json import Serializer
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
@@ -75,6 +76,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         delete_instance_medias(instance, 'images', json=True)
         instance.delete()
 
+
     # TODO: update json images
     @action(detail=False, methods=['post'], url_path=r'upload-image')
     def upload_image(self, request):
@@ -86,6 +88,6 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
 
         result = save_uploaded_images(request, 'lost_notice_images', instance_id=instance_id)
         if result:
-            return HttpResponse({'result': result}, content_type='application/json')
+            return Response(Serializer().serialize({'result': result}))
         else:
             return HttpResponseBadRequest()
