@@ -17,7 +17,7 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
     serializer_class = FoundNoticeSerializer
     pagination_class = CursorPagination
     ordering = ['-updated_at']
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [NoticePermission]
 
     filterset_fields = ['status', 'found_datetime', 'found_location', 'updated_at', 'created_at',
                         'property__template', 'property__template__type__name', 'property__tags__name',

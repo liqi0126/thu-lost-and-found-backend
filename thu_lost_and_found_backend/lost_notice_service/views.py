@@ -17,7 +17,8 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
     serializer_class = LostNoticeSerializer
     pagination_class = CursorPagination
     ordering = ['-updated_at']
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [NoticePermission]
+    
     filterset_fields = ['status', 'est_lost_start_datetime', 'est_lost_end_datetime',
                         'lost_location', 'updated_at', 'created_at',
                         'property__template', 'property__template__type__name', 'property__tags__name',
