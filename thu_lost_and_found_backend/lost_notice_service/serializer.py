@@ -76,3 +76,6 @@ class LostNoticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = LostNotice
         fields = '__all__'
+
+class ImageURLSerializer(serializers.Serializer):
+    url = serializers.ListField()

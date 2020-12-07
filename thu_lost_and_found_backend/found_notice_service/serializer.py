@@ -81,3 +81,7 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoundNotice
         fields = '__all__'
+
+
+class ImageURLSerializer(serializers.Serializer):
+    url = serializers.ListField()
