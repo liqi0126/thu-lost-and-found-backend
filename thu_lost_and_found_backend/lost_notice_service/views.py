@@ -76,10 +76,15 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         instance.delete()
 
     # TODO: update json images
-
     @action(detail=False, methods=['post'], url_path=r'upload-image')
     def upload_image(self, request):
-        result = save_uploaded_images(request, 'lost_notice_images', LostNotice)
+        if 'id' in request.data:
+            instance_id = request.data['id']
+        else:
+            id_max = LostNotice.objects.all().aggregate(Max('id'))['id__max']
+            instance_id = id_max + 1 if id_max else 1
+
+        result = save_uploaded_images(request, 'lost_notice_images', instance_id=instance_id)
         if result:
             return JsonResponse(result, safe=False)
         else:
