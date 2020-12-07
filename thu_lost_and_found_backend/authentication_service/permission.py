@@ -22,7 +22,7 @@ class UserPermission(permissions.BasePermission):
         path = request.path
 
         if user and user.is_authenticated:
-            if request.path == '/users/me/':
+            if path == '/users/me/':
                 return True
             else:
                 crud_user_match = re.match(string=path, pattern=r'^/users/(\d+)/')
