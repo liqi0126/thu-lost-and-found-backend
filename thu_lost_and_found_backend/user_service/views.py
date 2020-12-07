@@ -37,6 +37,11 @@ class UserViewSet(viewsets.ModelViewSet):
         user_json = json.dumps(UserSerializer(request.user).data)
         return HttpResponse(user_json, content_type='application/json')
 
+    @action(methods=['post'], url_path=r'')
+    def web_token(self, request):
+        post_data = {}
+        response = requests.post()
+        pass
 
 class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
     queryset = UserVerificationApplication.objects.all()
