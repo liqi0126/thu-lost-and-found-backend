@@ -80,6 +80,6 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
 
         result = save_uploaded_images(request, 'found_notice_images', instance_id=instance_id)
         if result:
-            return JsonResponse(result, safe=False)
+            return Response(data=result)
         else:
             return HttpResponseBadRequest()
