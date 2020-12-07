@@ -1,7 +1,7 @@
 import json
 
 from django.db.models import Max
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
@@ -29,7 +29,7 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":1}'
+        request.data['extra'] = '{"author":2}'
 
         if len(request.FILES) != 0:
             id_max = FoundNotice.objects.all().aggregate(Max('id'))['id__max']
@@ -49,7 +49,7 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":1}'
+        request.data['extra'] = '{"author":2}'
 
         if len(request.FILES) != 0:
             images_url = save_uploaded_images(request, 'found_notice_images', instance_id=instance.id)
@@ -72,12 +72,16 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         delete_instance_medias(instance, 'images', json=True)
         instance.delete()
 
-    # TODO: update json images
-
     @action(detail=False, methods=['post'], url_path=r'upload-image')
     def upload_image(self, request):
-        result = save_uploaded_images(request, 'found_notice_images', FoundNotice)
+        if 'id' in request.data:
+            instance_id = request.data['id']
+        else:
+            id_max = FoundNotice.objects.all().aggregate(Max('id'))['id__max']
+            instance_id = id_max + 1 if id_max else 1
+
+        result = save_uploaded_images(request, 'found_notice_images', instance_id=instance_id)
         if result:
-            return JsonResponse(result, safe=False)
+            return Response({'url': result})
         else:
             return HttpResponseBadRequest()

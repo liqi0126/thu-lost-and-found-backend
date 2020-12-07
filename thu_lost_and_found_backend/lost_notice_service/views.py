@@ -1,7 +1,6 @@
 import json
 
 from django.db.models import Max
-from django.http import HttpResponseBadRequest
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
@@ -31,7 +30,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
 
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":1}'
+        request.data['extra'] = '{"author":2}'
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -55,7 +54,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":1}'
+        request.data['extra'] = '{"author":2}'
 
         if len(request.FILES) != 0:
             images_url = save_uploaded_images(request, 'lost_notice_images', instance_id=instance.id)
@@ -79,11 +78,14 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         instance.delete()
 
     # TODO: update json images
-
     @action(detail=False, methods=['post'], url_path=r'upload-image')
     def upload_image(self, request):
-        result = ['asdasd', 'asdasd']
-        if result:
-            return Response(data=result)
+        if 'id' in request.data:
+            instance_id = request.data['id']
         else:
-            return HttpResponseBadRequest()
+            id_max = LostNotice.objects.all().aggregate(Max('id'))['id__max']
+            instance_id = id_max + 1 if id_max else 1
+
+        result = save_uploaded_images(request, 'lost_notice_images', instance_id=instance_id)
+        if result:
+            return Response({'url': result})
