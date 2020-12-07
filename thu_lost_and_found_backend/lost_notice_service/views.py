@@ -1,7 +1,7 @@
 import json
 from django.db.models import Max
 
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
@@ -86,6 +86,6 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
 
         result = save_uploaded_images(request, 'lost_notice_images', instance_id=instance_id)
         if result:
-            return JsonResponse({'result': result})
+            return HttpResponse({'result': result}, content_type='application/json')
         else:
             return HttpResponseBadRequest()
