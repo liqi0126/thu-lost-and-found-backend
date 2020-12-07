@@ -38,6 +38,8 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
 
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+        print(type(serializer.data))
+        print(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
@@ -80,6 +82,6 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
 
         result = save_uploaded_images(request, 'found_notice_images', instance_id=instance_id)
         if result:
-            return Response({'result': result})
+            return JsonResponse({'result': result})
         else:
             return HttpResponseBadRequest()

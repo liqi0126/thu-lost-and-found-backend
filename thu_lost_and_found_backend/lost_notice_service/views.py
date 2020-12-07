@@ -86,6 +86,6 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
 
         result = save_uploaded_images(request, 'lost_notice_images', instance_id=instance_id)
         if result:
-            return Response({'result': result})
+            return JsonResponse({'result': result})
         else:
             return HttpResponseBadRequest()
