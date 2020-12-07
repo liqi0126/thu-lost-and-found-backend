@@ -4,8 +4,15 @@ import time
 
 from PIL import Image
 from django.conf import settings
+from django.contrib.auth.base_user import BaseUserManager
 
 from thu_lost_and_found_backend.settings import BASE_DIR
+
+
+def random_string(length=64):
+    return BaseUserManager() \
+        .make_random_password(length=length,
+                              allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789')
 
 
 def check_missing_fields(contents, fields: list):
