@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from thu_lost_and_found_backend.found_notice_service.models import FoundNotice
-from thu_lost_and_found_backend.found_notice_service.serializer import FoundNoticeSerializer, ImageURLSerializer
+from thu_lost_and_found_backend.found_notice_service.serializer import FoundNoticeSerializer
 from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, delete_instance_medias
 
 
@@ -81,7 +81,6 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
 
         result = save_uploaded_images(request, 'found_notice_images', instance_id=instance_id)
         if result:
-            serializer = ImageURLSerializer({'url': result})
-            return Response(serializer.data)
+            return Response({'url': result})
         else:
             return HttpResponseBadRequest()
