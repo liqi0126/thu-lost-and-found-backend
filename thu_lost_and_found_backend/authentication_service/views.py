@@ -16,7 +16,7 @@ def create_user_base_on_wechat(open_id):
     return User.objects.create(
         wechat_openid=open_id,
         username='微信用户',
-        password=make_password('wechat_default_password'),
+        password=make_password(str(open_id)),
         first_name='Thu',
         last_name='Student',
         is_verified=False,
