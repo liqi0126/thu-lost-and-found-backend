@@ -30,6 +30,8 @@ def timestamp_filename(file_name, file_extension):
     return f'{file_name}_{int(round(time.time() * 1000))}.{file_extension}'
 
 
+# file_path example:
+# /media/lost_notice_images/id_1_1605532600500.jpg
 def delete_media_file(file_path):
     # Remove initial '/' in file path
     path = os.path.join(BASE_DIR, file_path[1:])
@@ -42,6 +44,13 @@ def delete_media_file(file_path):
             raise  # re-raise exception if a different error occurred
 
 
+# url example:
+# http://lost-and-found.com/media/lost_notice_images/id_1_1605532600500.jpg
+def delete_media_from_url(url):
+    start_index = url.find(settings.MEDIA_URL)
+    delete_media_file(url[start_index:])
+
+
 def delete_instance_medias(instance, media_attributes, json=False):
     # Handle single attribute
     if type(media_attributes) not in [list, tuple]:
@@ -51,8 +60,8 @@ def delete_instance_medias(instance, media_attributes, json=False):
         if not json:
             media_field = getattr(instance, attribute)
             if media_field:
-                url = media_field.url
-                delete_media_file(url)
+                file_path = media_field.url
+                delete_media_file(file_path)
         else:
             image_abs_urls = getattr(instance, attribute)
             if not image_abs_urls:
@@ -60,8 +69,7 @@ def delete_instance_medias(instance, media_attributes, json=False):
             image_abs_urls = image_abs_urls['image_urls']
             for image_abs_url in image_abs_urls:
                 url = image_abs_url
-                start_index = url.find(settings.MEDIA_URL)
-                delete_media_file(url[start_index:])
+                delete_media_from_url(url)
 
 
 def save_uploaded_images(request, upload_to, instance_id):
