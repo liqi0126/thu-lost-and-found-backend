@@ -52,6 +52,11 @@ class NoticePermission(permissions.BasePermission):
         else:
             request.GET._mutable = True
             if not user.is_staff:
+                # User can filter own posts by status
+                if 'author__username' in request.GET and user:
+                    if request.GET['author__username'] == user.username:
+                        return True
+
                 request.GET['status'] = 'PUB'
 
         return True
