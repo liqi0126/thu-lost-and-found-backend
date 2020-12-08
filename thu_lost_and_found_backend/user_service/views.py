@@ -132,6 +132,8 @@ class UserEmailVerificationViewSet(viewsets.ModelViewSet):
     queryset = UserEmailVerification.objects.all()
     serializer_class = UserEmailVerificationSerializer
 
+    #    permission_classes = [IsAuthenticated]
+
     def create(self, request, *args, **kwargs):
 
         request.POST._mutable = True
@@ -143,7 +145,7 @@ class UserEmailVerificationViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         # Check if user is already verified
-        user = User.objects.get(pk=request.data['user'])
+        user = request.user
 
         if user.is_verified:
             return HttpResponseBadRequest(f'User "{user.username}" has already been verified.')
