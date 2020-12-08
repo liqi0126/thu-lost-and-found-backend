@@ -49,8 +49,10 @@ def delete_instance_medias(instance, media_attributes, json=False):
 
     for attribute in media_attributes:
         if not json:
-            url = getattr(instance, attribute).url
-            delete_media_file(url)
+            media_field = getattr(instance, attribute)
+            if media_field:
+                url = media_field.url
+                delete_media_file(url)
         else:
             image_abs_urls = getattr(instance, attribute)
             if not image_abs_urls:
