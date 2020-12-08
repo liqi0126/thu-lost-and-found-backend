@@ -14,8 +14,8 @@ from thu_lost_and_found_backend.user_service.models import User
 
 def create_user_base_on_wechat(open_id):
     return User.objects.create(
-        wechat_id=open_id,
-        username=str(open_id),
+        wechat_openid=open_id,
+        username='微信用户',
         password=make_password('wechat_default_password'),
         first_name='Thu',
         last_name='Student',
@@ -56,7 +56,7 @@ def wechat_token(request):
     open_id = response['openid']
 
     try:
-        user = User.objects.get(wechat_id=open_id)
+        user = User.objects.get(wechat_openid=open_id)
     except User.DoesNotExist:
         user = create_user_base_on_wechat(open_id)
 

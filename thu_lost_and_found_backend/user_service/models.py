@@ -36,9 +36,11 @@ class User(AbstractUser):
     username = models.CharField(max_length=125)
     email = models.EmailField(unique=True, max_length=125, null=True, blank=True)
     avatar = models.ImageField(upload_to=image_upload_path, null=True, blank=True)
+    wechat_avatar = models.CharField(max_length=225, null=True, blank=True)
 
     phone = models.CharField(max_length=20, null=True, blank=True, unique=True)
     student_id = models.CharField(max_length=20, null=True, blank=True, unique=True)
+    wechat_openid = models.CharField(max_length=50, null=True, blank=True, unique=True)
     wechat_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
 
     is_verified = models.BooleanField(default=False)

@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ['password', 'extra', 'created_at', 'updated_at']
+        exclude = ['password', 'wechat_openid', 'extra', 'created_at', 'updated_at']
 
 
 class UserSimpleSerializer(serializers.ModelSerializer):
@@ -24,7 +24,7 @@ class UserSimpleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'avatar', 'is_verified', 'status']
+        fields = ['first_name', 'last_name', 'username', 'wechat_avatar', 'avatar', 'is_verified', 'status']
 
 
 class UserVerificationApplicationSerializer(serializers.ModelSerializer):
