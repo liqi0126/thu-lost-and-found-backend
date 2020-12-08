@@ -64,7 +64,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     # 'thu_lost_and_found_backend.authentication_service.middleware.JWTAuthenticationMiddleware',
-    # 'thu_lost_and_found_backend.authentication_service.middleware.NoticesAuthorizationMiddleware'
 ]
 
 ROOT_URLCONF = 'thu_lost_and_found_backend.urls'
@@ -172,7 +171,6 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework.filters.OrderingFilter',
         'rest_framework.filters.SearchFilter',
-        'rest_framework.filters.OrderingFilter',
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',

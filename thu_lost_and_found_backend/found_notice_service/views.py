@@ -1,12 +1,10 @@
 import json
-from django.db.models import Max
 
-from django.http import HttpResponseBadRequest, HttpResponse
-from django.core.serializers.json import Serializer
+from django.db.models import Max
+from django.http import HttpResponseBadRequest
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from thu_lost_and_found_backend.found_notice_service.models import FoundNotice
@@ -19,10 +17,15 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
     serializer_class = FoundNoticeSerializer
     pagination_class = CursorPagination
     ordering = ['-updated_at']
-    # permission_classes = [IsAuthenticatedOrReadOnly]
-    # TODO: Custom property type, templates, author filter
-    filterset_fields = ['description', 'status', 'found_datetime', 'found_location']
-    search_fields = ['description', 'status', 'found_datetime', 'found_location']
+    # permission_classes = [NoticePermission]
+
+    filterset_fields = ['status', 'found_datetime', 'found_location', 'updated_at', 'created_at',
+                        'property__template', 'property__template__type__name', 'property__tags__name',
+                        'author__username']
+
+    search_fields = ['description', 'found_location',
+                     'property__name', 'property__description', 'property__tags__name',
+                     'author__username', 'extra']
 
     def create(self, request, *args, **kwargs):
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
@@ -39,8 +42,6 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
 
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        print(type(serializer.data))
-        print(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
