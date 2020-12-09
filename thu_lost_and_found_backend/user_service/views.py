@@ -1,6 +1,7 @@
 import json
 import re
 from datetime import datetime, timedelta
+import requests
 
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
@@ -21,7 +22,6 @@ from thu_lost_and_found_backend.user_service.serializer import UserSerializer, U
 from .email_verification_template import email_verification_template
 from .invitation_template import invitation_template
 
-
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -36,6 +36,32 @@ class UserViewSet(viewsets.ModelViewSet):
     def current_user_info(self, request):
         user_json = json.dumps(UserSerializer(request.user).data)
         return HttpResponse(user_json, content_type='application/json')
+
+    @action(methods=['post'], url_path=r'wechat_thu_auth', detail=False)
+    def wechat_auth(self, request):
+        url = "https://alumni-test.iterator-traits.com/fake-id-tsinghua-proxy/api/user/session/token"
+        reply = requests.post(url, {"token": request.data.get('token', '')})
+
+        if reply.status_code == 200:
+            request.user.is_verified = True
+            request.user.student_id = reply.data['user']['card']
+            request.user.department = reply.data['user']['department']
+            request.user.save()
+
+        return Response(reply)
+
+    @action(methods=['post'], url_path=r'web_thu_auth', detail=False)
+    def web_auth(self, request):
+        ticket = request.data['ticket']
+        url = f"https://alumni-test.iterator-traits.com/fake-id-tsinghua/thuser/authapi/checkticket/THULOSTANDFOUND/{ticket}/154_8_201_138"
+
+        reply = requests.get(url)
+
+        if reply.status_code == 200:
+            # TODO: do we need thu auth for web?
+            pass
+
+        return Response(reply)
 
 
 class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
