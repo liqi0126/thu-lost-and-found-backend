@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'thu_lost_and_found_backend.user_service.apps.UserServiceConfig',
     'thu_lost_and_found_backend.tag_service.apps.TagServiceConfig',
     'thu_lost_and_found_backend.matching_service.apps.MatchingServiceConfig',
+    'thu_lost_and_found_backend.report_service.apps.ReportServiceConfig',
 
     'rest_framework',
 ]
