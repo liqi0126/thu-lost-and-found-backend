@@ -19,7 +19,7 @@ class LostNotice(models.Model):
 
     est_lost_start_datetime = models.DateTimeField(null=True, blank=True)
     est_lost_end_datetime = models.DateTimeField(null=True, blank=True)
-    lost_location = models.CharField(max_length=200, null=False, blank=False)
+    lost_location = models.JSONField(null=False, blank=False)
 
     reward = models.CharField(max_length=50, null=True, blank=True)
 
