@@ -29,7 +29,7 @@ class FoundNotice(models.Model):
                                     related_name='returned_lost_property_notices')
     return_datetime = models.DateTimeField(null=True, blank=True)
 
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='found_notice')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='found_notices')
 
     extra = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
