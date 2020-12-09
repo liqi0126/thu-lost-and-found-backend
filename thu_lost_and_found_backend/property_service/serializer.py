@@ -37,7 +37,7 @@ class PropertySerializer(serializers.ModelSerializer):
         return _property
 
     def update(self, instance, validated_data):
-        tags_data = validated_data.pop('tags')
+        tags_data = validated_data.pop('tags') if 'tags' in validated_data else []
         _property = serializers.ModelSerializer.update(self, instance, validated_data)
 
         # TODO: optimization?
