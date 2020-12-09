@@ -21,7 +21,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
     filterset_fields = ['status', 'est_lost_start_datetime', 'est_lost_end_datetime',
                         'lost_location', 'updated_at', 'created_at',
                         'property__template', 'property__template__type__name', 'property__tags__name',
-                        'author__username']
+                        'author__id']
 
     search_fields = ['description', 'lost_location', 'reward',
                      'property__name', 'property__description', 'property__tags__name',
