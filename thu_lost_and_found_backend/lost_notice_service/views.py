@@ -7,7 +7,7 @@ from rest_framework.pagination import CursorPagination
 from rest_framework.response import Response
 
 from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, delete_instance_medias
-from thu_lost_and_found_backend.lost_notice_service.models import LostNotice
+from thu_lost_and_found_backend.lost_notice_service.models import LostNotice, LostNoticeStatus
 from thu_lost_and_found_backend.lost_notice_service.serializer import LostNoticeSerializer
 
 
@@ -30,7 +30,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
 
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":3}'
+        request.data['extra'] = '{"author":2}'
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -54,7 +54,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":3}'
+        request.data['extra'] = '{"author":2}'
 
         if len(request.FILES) != 0:
             images_url = save_uploaded_images(request, 'lost_notice_images', instance_id=instance.id)
@@ -89,3 +89,31 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         result = save_uploaded_images(request, 'lost_notice_images', instance_id=instance_id)
         if result:
             return Response({'url': result})
+
+    @action(detail=True, methods=['post'], url_path=r'return')
+    def post_return(self, request, pk):
+        notice = LostNotice.objects.get(pk=pk)
+        notice.status = LostNoticeStatus.RETURN
+        notice.save()
+        return Response('ok')
+
+    @action(detail=True, methods=['post'], url_path=r'close')
+    def post_close(self, request, pk):
+        notice = LostNotice.objects.get(pk=pk)
+        notice.status = LostNoticeStatus.CLOSE
+        notice.save()
+        return Response('ok')
+
+    @action(detail=True, methods=['post'], url_path=r'public')
+    def post_return(self, request, pk):
+        notice = LostNotice.objects.get(pk=pk)
+        notice.status = LostNoticeStatus.PUBLIC
+        notice.save()
+        return Response('ok')
+
+    @action(detail=True, methods=['post'], url_path=r'draft')
+    def post_draft(self, request, pk):
+        notice = LostNotice.objects.get(pk=pk)
+        notice.status = LostNoticeStatus.PUBLIC
+        notice.save()
+        return Response('ok')
