@@ -19,11 +19,11 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
     ordering = ['-updated_at']
     # permission_classes = [NoticePermission]
 
-    filterset_fields = ['status', 'found_datetime', 'found_location', 'updated_at', 'created_at',
+    filterset_fields = ['status', 'found_datetime', 'updated_at', 'created_at',
                         'property__template', 'property__template__type__name', 'property__tags__name',
                         'author__id']
 
-    search_fields = ['description', 'found_location',
+    search_fields = ['description', 'found_location__name',
                      'property__name', 'property__description', 'property__tags__name',
                      'author__username', 'extra']
 
