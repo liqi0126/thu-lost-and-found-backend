@@ -24,7 +24,7 @@ class UserSimpleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'wechat_avatar', 'avatar', 'is_verified', 'status']
+        fields = ['id', 'first_name', 'last_name', 'username', 'wechat_avatar', 'avatar', 'is_verified', 'status']
 
 
 class UserVerificationApplicationSerializer(serializers.ModelSerializer):

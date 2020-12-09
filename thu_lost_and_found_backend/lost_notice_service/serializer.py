@@ -5,7 +5,7 @@ from rest_framework import serializers
 from thu_lost_and_found_backend.contact_service.models import Contact
 from thu_lost_and_found_backend.contact_service.serializer import ContactSimpleSerializer
 from thu_lost_and_found_backend.found_notice_service.models import FoundNotice, FoundNoticeStatus
-from thu_lost_and_found_backend.helpers.match import matching
+from thu_lost_and_found_backend.matching_service.match import matching
 from thu_lost_and_found_backend.lost_notice_service.models import LostNotice
 from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer

@@ -11,7 +11,7 @@ from thu_lost_and_found_backend.user_service.models import User
 from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
 
-from thu_lost_and_found_backend.helpers.match import matching
+from thu_lost_and_found_backend.matching_service.match import matching
 from thu_lost_and_found_backend.user_service.serializer import UserSimpleSerializer
 
 
