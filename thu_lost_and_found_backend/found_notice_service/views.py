@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
 from rest_framework.response import Response
 
-from thu_lost_and_found_backend.found_notice_service.models import FoundNotice
+from thu_lost_and_found_backend.found_notice_service.models import FoundNotice, FoundNoticeStatus
 from thu_lost_and_found_backend.found_notice_service.serializer import FoundNoticeSerializer
 from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, delete_instance_medias
 
@@ -85,3 +85,31 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
             return Response({'url': result})
         else:
             return HttpResponseBadRequest()
+
+    @action(detail=True, methods=['post'], url_path=r'return')
+    def post_return(self, request, pk):
+        notice = FoundNotice.objects.get(pk=pk)
+        notice.status = FoundNoticeStatus.RETURN
+        notice.save()
+        return Response('ok')
+
+    @action(detail=True, methods=['post'], url_path=r'close')
+    def post_close(self, request, pk):
+        notice = FoundNotice.objects.get(pk=pk)
+        notice.status = FoundNoticeStatus.CLOSE
+        notice.save()
+        return Response('ok')
+
+    @action(detail=True, methods=['post'], url_path=r'public')
+    def post_return(self, request, pk):
+        notice = FoundNotice.objects.get(pk=pk)
+        notice.status = FoundNoticeStatus.PUBLIC
+        notice.save()
+        return Response('ok')
+
+    @action(detail=True, methods=['post'], url_path=r'draft')
+    def post_draft(self, request, pk):
+        notice = FoundNotice.objects.get(pk=pk)
+        notice.status = FoundNoticeStatus.PUBLIC
+        notice.save()
+        return Response('ok')
