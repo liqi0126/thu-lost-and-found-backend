@@ -34,9 +34,9 @@ class Report(models.Model):
     verdict = models.CharField(max_length=500, null=True, blank=True)
 
     notice_type = models.CharField(max_length=3, choices=NoticeType.choices, default=NoticeType.LOST)
-    lost_notice = models.ForeignKey(LostNotice, on_delete=models.CASCADE, related_name='reports',
+    lost_notice = models.ForeignKey(LostNotice, on_delete=models.DO_NOTHING, related_name='reports',
                                     null=True, blank=True)
-    found_notice = models.ForeignKey(FoundNotice, on_delete=models.CASCADE, related_name='reports',
+    found_notice = models.ForeignKey(FoundNotice, on_delete=models.DO_NOTHING, related_name='reports',
                                      null=True, blank=True)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reports')
