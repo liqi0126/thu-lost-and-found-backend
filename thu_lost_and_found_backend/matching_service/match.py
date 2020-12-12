@@ -2,6 +2,8 @@ import jieba
 import numpy as np
 import math
 
+MATCHING_THRESHOLD = 0.8
+
 NTC_LOC_WT = 2  # notice_location_weight
 NTC_TIME_WT = 5  # notice_time_weight
 NTC_DESC_WT = 10  # notice_description_weight

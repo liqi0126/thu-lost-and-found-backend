@@ -21,6 +21,10 @@ from thu_lost_and_found_backend.user_service.serializer import UserSerializer, U
 from .email_verification_template import email_verification_template
 from .invitation_template import invitation_template
 
+from thu_lost_and_found_backend.matching_service.models import MatchingEntry
+from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
+from thu_lost_and_found_backend.matching_service.match import MATCHING_THRESHOLD
+from thu_lost_and_found_backend.matching_service.views import MatchingEntryViewSet
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -36,6 +40,17 @@ class UserViewSet(viewsets.ModelViewSet):
     def current_user_info(self, request):
         user_json = json.dumps(UserSerializer(request.user).data)
         return HttpResponse(user_json, content_type='application/json')
+
+    @action(detail=True, methods=['get'], url_path=r'get-high-matching-entry')
+    def get_high_matching_entry(self, request, pk):
+        queryset = MatchingEntry.objects.filter(lost_notice__author=pk, matching_degree__gt=MATCHING_THRESHOLD)
+        page = MatchingEntryViewSet.paginate_queryset(self, queryset=queryset)
+        if page is not None:
+            serializer = MatchingEntrySerializer(page, many=True)
+            return MatchingEntryViewSet.get_paginated_response(self, serializer.data)
+
+        serializer = MatchingEntrySerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class UserVerificationApplicationViewSet(viewsets.ModelViewSet):

@@ -6,7 +6,6 @@ from thu_lost_and_found_backend.lost_notice_service.models import LostNotice
 
 from .email_matched_notify_template import email_matched_notify_template
 
-MATCHING_THRESHOLD = 0.8
 
 
 def matching_notify(lost_notice: LostNotice):

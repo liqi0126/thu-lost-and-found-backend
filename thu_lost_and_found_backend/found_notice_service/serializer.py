@@ -9,8 +9,8 @@ from thu_lost_and_found_backend.lost_notice_service.models import LostNotice, Lo
 from thu_lost_and_found_backend.property_service.serializer import PropertySerializer
 from thu_lost_and_found_backend.user_service.models import User
 
-from thu_lost_and_found_backend.matching_service.match import matching
-from thu_lost_and_found_backend.matching_service.notify import MATCHING_THRESHOLD, matching_notify
+from thu_lost_and_found_backend.matching_service.match import matching, MATCHING_THRESHOLD
+from thu_lost_and_found_backend.matching_service.notify import matching_notify
 from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
 
