@@ -8,9 +8,9 @@ from thu_lost_and_found_backend.user_service.models import User, UserVerificatio
 class UserSerializer(serializers.ModelSerializer):
     queryset = User.objects.all()
     contacts = ContactSerializer(many=True, read_only=True)
-    found_notice = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    found_notices = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     found_lost_property_notices = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    lost_notice = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    lost_notices = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     returned_lost_property_notices = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     verification_application = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
 
