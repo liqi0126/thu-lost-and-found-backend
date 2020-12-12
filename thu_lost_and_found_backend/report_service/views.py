@@ -33,6 +33,11 @@ def insert_users_into_request_extra(request):
 class ReportViewSet(viewsets.ModelViewSet):
     queryset = Report.objects.all()
     serializer_class = ReportSerializer
+    filterset_fields = ['type', 'user', 'submit_user', 'notice_type']
+    search_fields = ['description', 'user', 'submit_user',
+                     'lost_notice', 'found_notice', 'extra']
+
+    # permission_classes = [ReportPermission]
 
     def create(self, request, *args, **kwargs):
         request.POST._mutable = True
@@ -42,7 +47,8 @@ class ReportViewSet(viewsets.ModelViewSet):
             return HttpResponseBadRequest(json.dumps({'user': ['This field is required.']}))
 
         # There should be no verdict on creation
-        request.data['verdict'] = None
+        request.data.pop('verdict', False)
+        request.data.pop('verdict_type', False)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
