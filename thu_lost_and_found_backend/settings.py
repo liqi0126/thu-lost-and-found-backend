@@ -65,6 +65,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     # 'thu_lost_and_found_backend.authentication_service.middleware.JWTAuthenticationMiddleware',
+    # 'thu_lost_and_found_backend.authentication_service.middleware.UserStatusValidationMiddleware',
 ]
 
 ROOT_URLCONF = 'thu_lost_and_found_backend.urls'
