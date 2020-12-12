@@ -8,10 +8,12 @@ from thu_lost_and_found_backend.found_notice_service.models import FoundNotice
 from thu_lost_and_found_backend.lost_notice_service.models import LostNotice, LostNoticeStatus
 from thu_lost_and_found_backend.property_service.serializer import PropertySerializer
 from thu_lost_and_found_backend.user_service.models import User
+
+from thu_lost_and_found_backend.matching_service.match import matching
+from thu_lost_and_found_backend.matching_service.notify import MATCHING_THRESHOLD, matching_notify
 from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
 
-from thu_lost_and_found_backend.matching_service.match import matching
 from thu_lost_and_found_backend.user_service.serializer import UserSimpleSerializer
 
 
@@ -39,10 +41,16 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
         # TODO: threading
         # matching
         lost_notices = LostNotice.objects.filter(status=LostNoticeStatus.PUBLIC, property__template=found_notice.property.template)
+        noticed_author = []
         for lost_notice in lost_notices:
             matching_degree = matching(lost_notice, found_notice)
             matching_entry = MatchingEntry.objects.create(lost_notice=lost_notice, found_notice=found_notice, matching_degree=matching_degree)
             matching_entry.save()
+            # try to notify user
+            if matching_degree > MATCHING_THRESHOLD:
+                if lost_notice.author.id not in noticed_author:
+                    matching_notify(lost_notice)
+                    noticed_author.append(lost_notice.author.id)
 
         return found_notice
 
@@ -71,10 +79,17 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
 
         # TODO: threading
         # matching
+        noticed_author = []
         for matching_entry in MatchingEntry.objects.filter(found_notice=found_notice):
-            matching_degree = matching(matching_entry.lost_notice, found_notice)
+            lost_notice = matching_entry.lost_notice
+            matching_degree = matching(lost_notice, found_notice)
             matching_entry.matching_degree = matching_degree
             matching_entry.save()
+            # try to notify user
+            if matching_degree > MATCHING_THRESHOLD:
+                if lost_notice.author.id not in noticed_author:
+                    matching_notify(lost_notice)
+                    noticed_author.append(lost_notice.author.id)
 
         return found_notice
 
