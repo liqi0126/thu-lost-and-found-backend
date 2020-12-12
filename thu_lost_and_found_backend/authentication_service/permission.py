@@ -48,16 +48,17 @@ class NoticePermission(permissions.BasePermission):
                 return False
 
         # If GET request
-        # Only staff can filter status, else status = PUB
         else:
-            request.GET._mutable = True
-            if not user.is_staff:
-                # User can filter own posts by status
-                if 'author__id' in request.GET and user:
-                    if int(request.GET['author__id']) == user.id:
-                        return True
+            # Only staff can filter list status, else status = PUB
+            if re.match(string=path, pattern=r'^/(lost|found)-notices/$'):
+                request.GET._mutable = True
+                if not user.is_staff:
+                    # User can filter own posts by status
+                    if 'author__id' in request.GET and user:
+                        if int(request.GET['author__id']) == user.id:
+                            return True
 
-                request.GET['status'] = 'PUB'
+                    request.GET['status'] = 'PUB'
 
         return True
 
@@ -75,4 +76,20 @@ class UserPermission(permissions.BasePermission):
         user = request.user
         if user != obj and not user.is_staff:
             return False
+        return True
+
+
+class ReportPermission(permissions.BasePermission):
+    message = 'User can only create or view reports.'
+
+    def has_permission(self, request, view):
+        user = request.user
+        if not user.is_authenticated:
+            return False
+        if request.method not in permissions.SAFE_METHODS:
+            # Normal user can only create but not edit
+            if request.method != 'POST':
+                if not user.is_staff:
+                    return False
+
         return True
