@@ -90,30 +90,14 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         if result:
             return Response({'url': result})
 
-    @action(detail=True, methods=['post'], url_path=r'return')
-    def post_return(self, request, pk):
+    @action(detail=True, methods=['post'], url_path=r'change-status')
+    def change_status(self, request, pk):
         notice = LostNotice.objects.get(pk=pk)
-        notice.status = LostNoticeStatus.RETURN
-        notice.save()
-        return Response('ok')
-
-    @action(detail=True, methods=['post'], url_path=r'close')
-    def post_close(self, request, pk):
-        notice = LostNotice.objects.get(pk=pk)
-        notice.status = LostNoticeStatus.CLOSE
-        notice.save()
-        return Response('ok')
-
-    @action(detail=True, methods=['post'], url_path=r'public')
-    def post_return(self, request, pk):
-        notice = LostNotice.objects.get(pk=pk)
-        notice.status = LostNoticeStatus.PUBLIC
-        notice.save()
-        return Response('ok')
-
-    @action(detail=True, methods=['post'], url_path=r'draft')
-    def post_draft(self, request, pk):
-        notice = LostNotice.objects.get(pk=pk)
-        notice.status = LostNoticeStatus.PUBLIC
+        if 'status' not in request.data:
+            return Response("status is not specified!")
+        status = request.data['status']
+        if status not in LostNoticeStatus:
+            return Response("not a vaild status")
+        notice.status = status
         notice.save()
         return Response('ok')

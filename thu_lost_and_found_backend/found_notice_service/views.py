@@ -86,30 +86,14 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         else:
             return HttpResponseBadRequest()
 
-    @action(detail=True, methods=['post'], url_path=r'return')
-    def post_return(self, request, pk):
+    @action(detail=True, methods=['post'], url_path=r'change-status')
+    def change_status(self, request, pk):
         notice = FoundNotice.objects.get(pk=pk)
-        notice.status = FoundNoticeStatus.RETURN
-        notice.save()
-        return Response('ok')
-
-    @action(detail=True, methods=['post'], url_path=r'close')
-    def post_close(self, request, pk):
-        notice = FoundNotice.objects.get(pk=pk)
-        notice.status = FoundNoticeStatus.CLOSE
-        notice.save()
-        return Response('ok')
-
-    @action(detail=True, methods=['post'], url_path=r'public')
-    def post_return(self, request, pk):
-        notice = FoundNotice.objects.get(pk=pk)
-        notice.status = FoundNoticeStatus.PUBLIC
-        notice.save()
-        return Response('ok')
-
-    @action(detail=True, methods=['post'], url_path=r'draft')
-    def post_draft(self, request, pk):
-        notice = FoundNotice.objects.get(pk=pk)
-        notice.status = FoundNoticeStatus.PUBLIC
+        if 'status' not in request.data:
+            return Response("status is not specified!")
+        status = request.data['status']
+        if status not in FoundNoticeStatus:
+            return Response("not a vaild status")
+        notice.status = status
         notice.save()
         return Response('ok')
