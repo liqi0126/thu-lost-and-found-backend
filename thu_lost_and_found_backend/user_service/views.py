@@ -9,6 +9,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -37,16 +38,18 @@ class UserViewSet(viewsets.ModelViewSet):
         user_json = json.dumps(UserSerializer(request.user).data)
         return HttpResponse(user_json, content_type='application/json')
 
-    @action(methods=['post'], url_path=r'wechat_thu_auth', detail=False)
-    def wechat_auth(self, request):
+    @action(detail=True, methods=['post'], url_path=r'wechat_thu_auth')
+    def wechat_auth(self, request, pk):
         url = "https://alumni-test.iterator-traits.com/fake-id-tsinghua-proxy/api/user/session/token"
         reply = requests.post(url, {"token": request.data.get('token', '')})
 
         if reply.status_code == 200:
-            request.user.is_verified = True
-            request.user.student_id = reply.data['user']['card']
-            request.user.department = reply.data['user']['department']
-            request.user.save()
+            reply = reply.json()
+            user = User.objects.get(pk=pk)
+            user.is_verified = True
+            user.student_id = reply['user']['card']
+            user.department = reply['user']['department']
+            user.save()
 
         return Response(reply)
 
