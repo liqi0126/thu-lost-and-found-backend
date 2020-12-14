@@ -35,7 +35,8 @@ router.register(r'reports', ReportViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('auth/', include('thu_lost_and_found_backend.authentication_service.urls'))
+    path('auth/', include('thu_lost_and_found_backend.authentication_service.urls')),
+    path('chat/', include('thu_lost_and_found_backend.chat_service.urls'))  # TODO: temp file for debug
 ]
 
 # image links

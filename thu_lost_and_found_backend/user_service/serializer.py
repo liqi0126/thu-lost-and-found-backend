@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ['password', 'wechat_openid', 'extra', 'created_at', 'updated_at']
+        exclude = ['password', 'wechat_openid', 'extra', 'created_at', 'updated_at', 'channel_name']
 
 
 class UserSimpleSerializer(serializers.ModelSerializer):

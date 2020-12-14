@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
+
+    'channels',
+    'rest_framework',
+
     # thu-lost-and-found
     'thu_lost_and_found_backend',
     'thu_lost_and_found_backend.authentication_service.apps.AuthenticationServiceConfig',
@@ -51,8 +55,7 @@ INSTALLED_APPS = [
     'thu_lost_and_found_backend.tag_service.apps.TagServiceConfig',
     'thu_lost_and_found_backend.matching_service.apps.MatchingServiceConfig',
     'thu_lost_and_found_backend.report_service.apps.ReportServiceConfig',
-
-    'rest_framework',
+    'thu_lost_and_found_backend.chat_service.apps.ChatServiceConfig'
 ]
 
 MIDDLEWARE = [
@@ -189,3 +192,15 @@ EMAIL_DISPLAY_NAME = env('EMAIL_DISPLAY_NAME')
 
 WECHAT_APP_ID = env('WECHAT_APP_ID')
 WECHAT_APP_SECRET = env('WECHAT_APP_SECRET')
+
+# Channels
+ASGI_APPLICATION = "thu_lost_and_found_backend.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}

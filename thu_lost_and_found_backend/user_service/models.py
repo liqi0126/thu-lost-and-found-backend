@@ -44,6 +44,8 @@ class User(AbstractUser):
     wechat_openid = models.CharField(max_length=50, null=True, blank=True, unique=True)
     wechat_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
 
+    channel_name = models.CharField(max_length=150, null=True, blank=True, unique=True)
+
     is_verified = models.BooleanField(default=False)
     status = models.CharField(max_length=3, choices=UserStatus.choices, default=UserStatus.INACTIVE)
 
