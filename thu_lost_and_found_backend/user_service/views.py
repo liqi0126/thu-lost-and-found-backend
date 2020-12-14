@@ -1,6 +1,7 @@
 import json
 import re
 from datetime import datetime, timedelta
+import requests
 
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
@@ -8,6 +9,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -25,6 +27,7 @@ from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
 from thu_lost_and_found_backend.matching_service.match import MATCHING_THRESHOLD
 from thu_lost_and_found_backend.matching_service.views import MatchingEntryViewSet
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -52,6 +55,33 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = MatchingEntrySerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, methods=['post'], url_path=r'wechat_thu_auth')
+    def wechat_auth(self, request, pk):
+        url = "https://alumni-test.iterator-traits.com/fake-id-tsinghua-proxy/api/user/session/token"
+        reply = requests.post(url, {"token": request.data.get('token', '')})
+
+        if reply.status_code == 200:
+            reply = reply.json()
+            user = User.objects.get(pk=pk)
+            user.is_verified = True
+            user.student_id = reply['user']['card']
+            user.department = reply['user']['department']
+            user.save()
+
+        return Response(reply)
+
+    @action(methods=['post'], url_path=r'web_thu_auth', detail=False)
+    def web_auth(self, request):
+        ticket = request.data['ticket']
+        url = f"https://alumni-test.iterator-traits.com/fake-id-tsinghua/thuser/authapi/checkticket/THULOSTANDFOUND/{ticket}/154_8_201_138"
+
+        reply = requests.get(url)
+
+        if reply.status_code == 200:
+            # TODO: do we need thu auth for web?
+            pass
+
+        return Response(reply)
 
 class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
     queryset = UserVerificationApplication.objects.all()

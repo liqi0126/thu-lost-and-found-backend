@@ -40,6 +40,7 @@ class User(AbstractUser):
 
     phone = models.CharField(max_length=20, null=True, blank=True, unique=True)
     student_id = models.CharField(max_length=20, null=True, blank=True, unique=True)
+    department = models.CharField(max_length=20, null=True, blank=True)
     wechat_openid = models.CharField(max_length=50, null=True, blank=True, unique=True)
     wechat_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
 
