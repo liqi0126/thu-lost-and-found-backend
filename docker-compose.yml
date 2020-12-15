@@ -6,7 +6,7 @@ services:
     build: .
     command: >
       bash -c
-      "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn thu_lost_and_found_backend.wsgi -w 4 -k gthread -b 0.0.0.0:8000"
+      "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && daphne -b 0.0.0.0 -p 8000  thu_lost_and_found_backend.asgi:application"
     volumes:
       - .:/code
       - static-volume:/code/static
@@ -16,9 +16,26 @@ services:
     depends_on:
       - db
       - redis
+    links:
+      - redis
     networks:
       - web_network
       - db_network
+    environment:
+      - REDIS_HOST=redis
+#  daphne:
+#    container_name: daphne
+#    build: .
+#    command: >
+#      bash -c "daphne -b 0.0.0.0 -p 8000  thu_lost_and_found_backend.asgi:application"
+#    expose:
+#      - "8000"
+#    environment:
+#      - REDIS_HOST=redis
+#    depends_on:
+#      - redis
+#    links:
+#      - redis
   redis:
     container_name: redis
     restart: always
@@ -58,7 +75,6 @@ services:
       - app
     networks:
       - web_network
-
 networks:
   web_network:
     driver: bridge
