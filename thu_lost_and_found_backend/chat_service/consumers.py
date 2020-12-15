@@ -28,7 +28,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def disconnect(self, close_code):
         user = User.objects.get(pk=self.user)
-        user.channel_name = ''
+        user.channel_name = None
         user.save()
 
     # Receive message from WebSocket
