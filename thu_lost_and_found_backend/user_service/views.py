@@ -98,8 +98,8 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         request.POST._mutable = True
         request.data['token'] = random_string(64)
-        if 'expiration_date' not in request.data:
-            request.data['expiration_date'] = datetime.now() + timedelta(weeks=2)
+        # if 'expiration_date' not in request.data:
+        request.data['expiration_date'] = datetime.now() + timedelta(weeks=2)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
