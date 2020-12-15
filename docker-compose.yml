@@ -6,7 +6,8 @@ services:
     build: .
     command: >
       bash -c
-      "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && daphne -b 0.0.0.0 -p 8000  thu_lost_and_found_backend.asgi:application"
+      "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && gunicorn thu_lost_and_found_backend.wsgi -w 4 -k gthread -b 0.0.0.0:8000"
+      #"python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && daphne -b 0.0.0.0 -p 8000  thu_lost_and_found_backend.asgi:application"
     volumes:
       - .:/code
       - static-volume:/code/static
@@ -23,19 +24,19 @@ services:
       - db_network
     environment:
       - REDIS_HOST=redis
-#  daphne:
-#    container_name: daphne
-#    build: .
-#    command: >
-#      bash -c "daphne -b 0.0.0.0 -p 8000  thu_lost_and_found_backend.asgi:application"
-#    expose:
-#      - "8000"
-#    environment:
-#      - REDIS_HOST=redis
-#    depends_on:
-#      - redis
-#    links:
-#      - redis
+  daphne:
+    container_name: daphne
+    build: .
+    command: >
+      bash -c "daphne -b 0.0.0.0 -p 8000  thu_lost_and_found_backend.asgi:application"
+    expose:
+      - "8000"
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    links:
+      - redis
   redis:
     container_name: redis
     restart: always
@@ -67,10 +68,13 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - static-volume:/code/static
       - media-volume:/code/media
       - ./config/nginx:/etc/nginx/conf.d
+      - /etc/nginx/ssl/nginx.crt:/etc/nginx/ssl/nginx.crt
+      - /etc/nginx/ssl/nginx.key:/etc/nginx/ssl/nginx.key
     depends_on:
       - app
     networks:
