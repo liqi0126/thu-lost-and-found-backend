@@ -43,10 +43,12 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        sender_id = int(text_data_json['sender'])
+        sender_id = self.user
         receiver_id = int(text_data_json['receiver'])
         message = text_data_json['message']
+        self.send_message(sender_id, receiver_id, message)
 
+    def send_message(self, sender_id, receiver_id, message):
         try:
             sender = User.objects.get(pk=sender_id)
             receiver = User.objects.get(pk=receiver_id)

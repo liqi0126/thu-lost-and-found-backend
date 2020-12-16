@@ -41,16 +41,15 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
         # TODO: threading
         # matching
         lost_notices = LostNotice.objects.filter(status=LostNoticeStatus.PUBLIC, property__template=found_notice.property.template)
-        noticed_author = []
+        just_sent_users = []
         for lost_notice in lost_notices:
             matching_degree = matching(lost_notice, found_notice)
             matching_entry = MatchingEntry.objects.create(lost_notice=lost_notice, found_notice=found_notice, matching_degree=matching_degree)
             matching_entry.save()
             # try to notify user
             if matching_degree > MATCHING_THRESHOLD:
-                if lost_notice.author.id not in noticed_author:
-                    matching_notify(lost_notice)
-                    noticed_author.append(lost_notice.author.id)
+                matching_notify(matching_entry, just_sent=lost_notice.author.id in just_sent_users)
+                just_sent_users.append(lost_notice.author.id)
 
         return found_notice
 
@@ -79,7 +78,7 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
 
         # TODO: threading
         # matching
-        noticed_author = []
+        just_sent_users = []
         for matching_entry in MatchingEntry.objects.filter(found_notice=found_notice):
             lost_notice = matching_entry.lost_notice
             matching_degree = matching(lost_notice, found_notice)
@@ -87,9 +86,8 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
             matching_entry.save()
             # try to notify user
             if matching_degree > MATCHING_THRESHOLD:
-                if lost_notice.author.id not in noticed_author:
-                    matching_notify(lost_notice)
-                    noticed_author.append(lost_notice.author.id)
+                matching_notify(matching_entry, lost_notice.author.id in just_sent_users)
+                just_sent_users.append(lost_notice.author.id)
 
         return found_notice
 

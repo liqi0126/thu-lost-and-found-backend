@@ -43,7 +43,6 @@
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
                 'message': message,
-                'sender': userID,
                 'receiver': document.getElementById('chat-target-user').value
             }));
             messageInputDom.value = '';
