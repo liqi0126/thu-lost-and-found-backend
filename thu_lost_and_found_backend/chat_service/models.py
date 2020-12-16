@@ -8,7 +8,7 @@ class Message(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='received_messages')
     message = models.TextField()
     sent = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    time = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __str__(self):
         return self.message

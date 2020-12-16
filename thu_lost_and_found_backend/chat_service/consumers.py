@@ -11,7 +11,11 @@ from .models import Message
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.user = eval(self.scope['url_route']['kwargs']['user'])
-        user = User.objects.get(pk=self.user)
+        try:
+            user = User.objects.get(pk=self.user)
+        except User.DoesNotExist:
+            return
+
         user.channel_name = self.channel_name
         user.save()
 
@@ -23,11 +27,16 @@ class ChatConsumer(WebsocketConsumer):
             unsent_message.save()
             self.send(text_data=json.dumps({
                 'message': unsent_message.message,
-                'sender': unsent_message.sender.id
+                'sender': unsent_message.sender.id,
+                'time': str(unsent_message.time)
             }))
 
     def disconnect(self, close_code):
-        user = User.objects.get(pk=self.user)
+        try:
+            user = User.objects.get(pk=self.user)
+        except User.DoesNotExist:
+            return
+
         user.channel_name = None
         user.save()
 
@@ -38,8 +47,12 @@ class ChatConsumer(WebsocketConsumer):
         receiver_id = int(text_data_json['receiver'])
         message = text_data_json['message']
 
-        sender = User.objects.get(pk=sender_id)
-        receiver = User.objects.get(pk=receiver_id)
+        try:
+            sender = User.objects.get(pk=sender_id)
+            receiver = User.objects.get(pk=receiver_id)
+        except User.DoesNotExist:
+            return
+
         message_obj = Message.objects.create(sender=sender, receiver=receiver, message=message)
 
         if receiver.channel_name:
@@ -49,7 +62,8 @@ class ChatConsumer(WebsocketConsumer):
                 {
                     'type': 'chat.message',
                     'sender': sender_id,
-                    'message': message
+                    'message': message,
+                    'time': str(message_obj.time)
                 }
             )
 
@@ -60,5 +74,6 @@ class ChatConsumer(WebsocketConsumer):
         # Send message to WebSocket
         self.send(text_data=json.dumps({
             'message': event['message'],
-            'sender': event['sender']
+            'sender': event['sender'],
+            'time': event['time']
         }))
