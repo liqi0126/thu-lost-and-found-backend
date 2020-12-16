@@ -74,6 +74,11 @@ class UserPermission(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         user = request.user
+        path = request.path
+
+        if re.match(string=path, pattern=r'^/users/(\d+)/simple-info/$'):
+            return True
+
         if user != obj and not user.is_staff:
             return False
         return True

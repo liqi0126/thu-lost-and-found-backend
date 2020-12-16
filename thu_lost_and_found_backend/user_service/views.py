@@ -1,32 +1,30 @@
 import json
 import re
 from datetime import datetime, timedelta
-import requests
 
+import requests
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from thu_lost_and_found_backend import settings
 from thu_lost_and_found_backend.helpers.toolkits import delete_instance_medias, check_missing_fields, random_string
+from thu_lost_and_found_backend.matching_service.match import MATCHING_THRESHOLD
+from thu_lost_and_found_backend.matching_service.models import MatchingEntry
+from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
+from thu_lost_and_found_backend.matching_service.views import MatchingEntryViewSet
 from thu_lost_and_found_backend.user_service.models import User, UserVerificationApplication, UserInvitation, \
     UserEmailVerification
 from thu_lost_and_found_backend.user_service.serializer import UserSerializer, UserVerificationApplicationSerializer, \
-    UserInvitationSerializer, UserEmailVerificationSerializer
+    UserInvitationSerializer, UserEmailVerificationSerializer, UserSimpleSerializer
 from .email_verification_template import email_verification_template
 from .invitation_template import invitation_template
-
-from thu_lost_and_found_backend.matching_service.models import MatchingEntry
-from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
-from thu_lost_and_found_backend.matching_service.match import MATCHING_THRESHOLD
-from thu_lost_and_found_backend.matching_service.views import MatchingEntryViewSet
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -42,6 +40,12 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], url_path=r'me', detail=False)
     def current_user_info(self, request):
         user_json = json.dumps(UserSerializer(request.user).data)
+        return HttpResponse(user_json, content_type='application/json')
+
+    @action(methods=['get'], url_path=r'simple-info', detail=True)
+    def simple_info(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        user_json = json.dumps(UserSimpleSerializer(user).data)
         return HttpResponse(user_json, content_type='application/json')
 
     @action(detail=True, methods=['get'], url_path=r'get-high-matching-entry')
@@ -82,6 +86,7 @@ class UserViewSet(viewsets.ModelViewSet):
             pass
 
         return Response(reply)
+
 
 class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
     queryset = UserVerificationApplication.objects.all()
