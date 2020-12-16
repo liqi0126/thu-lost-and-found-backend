@@ -33,9 +33,8 @@ def insert_users_into_request_extra(request):
 class ReportViewSet(viewsets.ModelViewSet):
     queryset = Report.objects.all()
     serializer_class = ReportSerializer
-    filterset_fields = ['type', 'user', 'submit_user', 'notice_type']
-    search_fields = ['description', 'user', 'submit_user',
-                     'lost_notice', 'found_notice', 'extra']
+    filterset_fields = ['type', 'user', 'submit_user', 'notice_type', 'lost_notice', 'found_notice']
+    search_fields = ['description', 'user__username', 'submit_user__username']
 
     # permission_classes = [ReportPermission]
 
