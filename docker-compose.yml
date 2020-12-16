@@ -10,7 +10,7 @@ services:
     volumes:
       - .:/code
       - static-volume:/code/static
-      - media-volume:/code/mediai
+      - media-volume:/code/media
     depends_on:
       - db
       - redis
@@ -34,6 +34,8 @@ services:
       - db_network
     volumes:
       - .:/code
+      - static-volume:/code/static
+      - media-volume:/code/media
   daphne:
     container_name: daphne
     build: .
@@ -51,6 +53,8 @@ services:
       - db_network
     volumes:
       - .:/code
+      - static-volume:/code/static
+      - media-volume:/code/media
   redis:
     container_name: redis
     restart: always
