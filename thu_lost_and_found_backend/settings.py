@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import pymysql
@@ -192,6 +193,10 @@ EMAIL_DISPLAY_NAME = env('EMAIL_DISPLAY_NAME')
 
 WECHAT_APP_ID = env('WECHAT_APP_ID')
 WECHAT_APP_SECRET = env('WECHAT_APP_SECRET')
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=6)
+}
 
 # Channels
 ASGI_APPLICATION = "thu_lost_and_found_backend.asgi.application"
