@@ -11,3 +11,4 @@ class MatchingEntryViewSet(viewsets.ModelViewSet):
     serializer_class = MatchingEntrySerializer
     pagination_class = CursorPagination
     ordering = ['matching_degree']
+    filter_fields = ['lost_notice_id', 'found_notice_id']
