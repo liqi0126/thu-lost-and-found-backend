@@ -1,7 +1,11 @@
 # chat/consumers.py
 import json
+
+from rest_framework import serializers
+
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+
 
 from thu_lost_and_found_backend.user_service.models import User
 from .models import Message
@@ -28,7 +32,7 @@ class ChatConsumer(WebsocketConsumer):
             self.send(text_data=json.dumps({
                 'message': unsent_message.message,
                 'sender': unsent_message.sender.id,
-                'time': str(unsent_message.time)
+                'time': serializers.DateTimeField().to_representation(unsent_message.time)
             }))
 
     def disconnect(self, close_code):
@@ -65,7 +69,7 @@ class ChatConsumer(WebsocketConsumer):
                     'type': 'chat.message',
                     'sender': sender_id,
                     'message': message,
-                    'time': str(message_obj.time)
+                    'time': serializers.DateTimeField().to_representation(message_obj.time)
                 }
             )
 
