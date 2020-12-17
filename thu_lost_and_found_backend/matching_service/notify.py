@@ -22,7 +22,7 @@ def matching_notify(matching_entry: MatchingEntry, just_sent=False):
     admin_consumer.send_message(1, lost_notice.author.id, json.dumps({
         "lost_notice": lost_notice.id,
         "found_notice": found_notice.id,
-        "matching_degree": matching_entry
+        "matching_degree": matching_degree
     }))
 
     if lost_notice.author.email is not None and not just_sent:
