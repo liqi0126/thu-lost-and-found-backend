@@ -25,12 +25,13 @@ class NoticeType(models.TextChoices):
 class VerdictType(models.TextChoices):
     GUILTY = 'GUI', _('Guilty')
     INNOCENCE = "INN", _('Innocence')
+    UNTREATED = "UNT", _('Untreated')
 
 
 class Report(models.Model):
     type = models.CharField(max_length=3, choices=ReportType.choices, default=ReportType.SCAM)
     description = models.CharField(max_length=500, null=True, blank=True)
-    verdict_type = models.CharField(max_length=3, choices=VerdictType.choices, default=VerdictType.INNOCENCE)
+    verdict_type = models.CharField(max_length=3, choices=VerdictType.choices, default=VerdictType.UNTREATED)
     verdict = models.CharField(max_length=500, null=True, blank=True)
 
     notice_type = models.CharField(max_length=3, choices=NoticeType.choices, default=NoticeType.LOST)

@@ -54,7 +54,8 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True, blank=True)
 
     def __str__(self):
-            return self.username
+        return self.username
+
 
 class UserRole(models.TextChoices):
     # Super admin

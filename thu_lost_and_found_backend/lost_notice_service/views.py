@@ -20,17 +20,18 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
 
     filterset_fields = ['status', 'est_lost_start_datetime', 'est_lost_end_datetime',
                         'updated_at', 'created_at',
-                        'property__template', 'property__template__type__name', 'property__tags__name',
-                        'author__id']
+                        'property__template__type__name', 'property__tags__name',
+                        'author__username']
 
     search_fields = ['description', 'lost_location__name', 'reward',
                      'property__name', 'property__description', 'property__tags__name',
+                     'property__template__type__name',
                      'author__username', 'extra']
 
     def create(self, request, *args, **kwargs):
 
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":2}'
+        request.data['extra'] = '{"author":1}'
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

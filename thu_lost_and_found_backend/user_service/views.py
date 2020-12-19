@@ -30,7 +30,10 @@ from .invitation_template import invitation_template
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filterset_fields = ['first_name', 'last_name', 'username',
+                        'student_id', 'status', 'is_staff', 'is_superuser', 'is_active', 'is_verified']
 
+    search_fields = ['first_name', 'last_name', 'username', 'student_id', 'status']
     #    permission_classes = [UserPermission]
 
     def perform_destroy(self, instance):
@@ -91,6 +94,8 @@ class UserViewSet(viewsets.ModelViewSet):
 class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
     queryset = UserVerificationApplication.objects.all()
     serializer_class = UserVerificationApplicationSerializer
+    filterset_fields = ['status', 'user__username']
+    search_fields = ['status', 'user__username', 'description']
     #    permission_classes = [IsAdminUser]
 
 

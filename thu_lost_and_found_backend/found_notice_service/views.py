@@ -20,16 +20,17 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
     # permission_classes = [NoticePermission]
 
     filterset_fields = ['status', 'found_datetime', 'updated_at', 'created_at',
-                        'property__template', 'property__template__type__name', 'property__tags__name',
-                        'author__id']
+                        'property__template__type__name', 'property__tags__name',
+                        'author__username']
 
     search_fields = ['description', 'found_location__name',
                      'property__name', 'property__description', 'property__tags__name',
+                     'property__template__type__name',
                      'author__username', 'extra']
 
     def create(self, request, *args, **kwargs):
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":2}'
+        request.data['extra'] = '{"author":1}'
 
         if len(request.FILES) != 0:
             id_max = FoundNotice.objects.all().aggregate(Max('id'))['id__max']
