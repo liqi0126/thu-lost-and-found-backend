@@ -1,6 +1,9 @@
 import json
 
-from django.db.models import Max
+
+from django.db.models import Max, Count
+from django.db.models.functions import TruncYear, TruncMonth, TruncDay
+from django.utils.dateparse import parse_datetime
 from django.http import HttpResponseBadRequest
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -22,7 +25,7 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
 
     filterset_fields = ['status', 'found_datetime', 'updated_at', 'created_at',
                         'property__template__type__name', 'property__tags__name',
-                        'author__username']
+                        'author__username', 'author__id']
 
     search_fields = ['description', 'found_location__name',
                      'property__name', 'property__description', 'property__tags__name',
@@ -31,7 +34,7 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":1}'
+        request.data['extra'] = '{"author":2}'
 
         if len(request.FILES) != 0:
             id_max = FoundNotice.objects.all().aggregate(Max('id'))['id__max']
@@ -51,7 +54,7 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":2}'
+        request.data['extra'] = '{"author":1}'
 
         if len(request.FILES) != 0:
             images_url = save_uploaded_images(request, 'found_notice_images', instance_id=instance.id)
@@ -112,3 +115,24 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         notice.status = status
         notice.save()
         return Response('ok')
+
+    @action(detail=False, methods=['get'], url_path=r'stat-timeline')
+    def stat_timeline(self, request):
+        start_time = parse_datetime(request.data['start_time'])
+        end_time = parse_datetime(request.data['end_time'])
+        date_type = request.data['type']
+        queryset = FoundNotice.objects.filter(created_at__range=(start_time, end_time))
+
+        if date_type == 'year':
+            queryset = queryset.annotate(month=TruncYear('created_at')).values('year').annotate(count=Count('id')).values('year', 'count')
+        if date_type == 'month':
+            queryset = queryset.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).values('month', 'count')
+        else:
+            queryset = queryset.annotate(day=TruncDay('created_at')).values('day').annotate(count=Count('id')).values('day', 'count')
+
+        return Response(queryset)
+
+    @action(detail=False, methods=['get'], url_path=r'stat-status')
+    def stat_status(self, request):
+        queryset = FoundNotice.objects.values('status').annotate(count=Count('id')).values('status', 'count')
+        return Response(queryset)

@@ -20,7 +20,7 @@ from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
 from thu_lost_and_found_backend.matching_service.views import MatchingEntryViewSet
 from thu_lost_and_found_backend.user_service.models import User, UserVerificationApplication, UserInvitation, \
-    UserEmailVerification
+    UserEmailVerification, UserStatus
 from thu_lost_and_found_backend.user_service.serializer import UserSerializer, UserVerificationApplicationSerializer, \
     UserInvitationSerializer, UserEmailVerificationSerializer, UserSimpleSerializer
 from .email_verification_template import email_verification_template
@@ -89,6 +89,17 @@ class UserViewSet(viewsets.ModelViewSet):
             pass
 
         return Response(reply)
+
+    @action(methods=['get'], url_path=r'statistic', detail=False)
+    def statistic(self, request):
+        return Response({
+            'total': User.objects.count(),
+            'active': User.objects.filter(status=UserStatus.ACTIVE).count(),
+            'inactive': User.objects.filter(status=UserStatus.INACTIVE).count(),
+            'suspended': User.objects.filter(status=UserStatus.SUSPENDED).count(),
+            'verified': User.objects.filter(is_verified=True).count(),
+            'staff': User.objects.filter(is_staff=True).count()
+        })
 
 
 class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
