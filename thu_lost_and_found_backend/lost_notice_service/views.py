@@ -1,12 +1,14 @@
 import json
 
 from django.db.models import Max
+from django.http import HttpResponseBadRequest
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
 from rest_framework.response import Response
 
-from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, delete_instance_medias
+from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, delete_instance_medias, \
+    delete_media_from_url
 from thu_lost_and_found_backend.lost_notice_service.models import LostNotice, LostNoticeStatus
 from thu_lost_and_found_backend.lost_notice_service.serializer import LostNoticeSerializer
 
@@ -90,6 +92,19 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         result = save_uploaded_images(request, 'lost_notice_images', instance_id=instance_id)
         if result:
             return Response({'url': result})
+
+    @action(detail=False, methods=['post'], url_path=r'delete-image')
+    def delete_image(self, request):
+        if 'url' in request.data:
+            image_url = request.data['url']
+        else:
+            return HttpResponseBadRequest('url is required.')
+
+        try:
+            delete_media_from_url(image_url)
+            return Response('Image deleted')
+        except (ValueError, OSError) as error:
+            return HttpResponseBadRequest(error)
 
     @action(detail=True, methods=['post'], url_path=r'change-status')
     def change_status(self, request, pk):
