@@ -47,6 +47,12 @@ def matching(lost_notice, found_notice):
         if lost_notice.est_lost_start_datetime > found_notice.found_datetime:
             return -1
 
+    if lost_property.template.type.name == "卡类":
+        if lost_property.attributes['卡号'] == found_property.attributes['卡号']:
+            return 1
+        else:
+            return -1
+
     ###########################################
     # NOTICE
     ###########################################
