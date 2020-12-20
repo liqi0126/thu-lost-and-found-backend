@@ -22,6 +22,8 @@ def matching_notify(matching_entry: MatchingEntry, just_sent=False):
     admin_consumer.send_message(1, lost_notice.author.id, json.dumps({
         "lost_notice": lost_notice.id,
         "found_notice": found_notice.id,
+        "lost_notice_name": lost_notice.property.name,
+        "found_notice_name": found_notice.property.name,
         "matching_degree": matching_degree
     }))
 
