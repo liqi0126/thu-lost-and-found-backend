@@ -23,7 +23,7 @@ def matching_notify(matching_entry: MatchingEntry, just_sent=False):
         "lost_notice_name": lost_notice.property.name,
         "found_notice_name": found_notice.property.name,
         "matching_degree": matching_degree
-    }))
+    }, ensure_ascii=False))
 
     if lost_notice.author.email is not None and not just_sent:
         send_mail(subject='失物匹配提示',
