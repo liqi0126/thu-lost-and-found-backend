@@ -33,10 +33,10 @@ router.register(r'user-verification-applications', UserVerificationApplicationVi
 router.register(r'reports', ReportViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('admin/', admin.site.urls),
-    path('auth/', include('thu_lost_and_found_backend.authentication_service.urls')),
-    path('chat/', include('thu_lost_and_found_backend.chat_service.urls'))  # TODO: temp file for debug
+    path('api/v1/', include(router.urls)),
+    path('api/v1/admin/', admin.site.urls),
+    path('api/v1/auth/', include('thu_lost_and_found_backend.authentication_service.urls')),
+    path('api/v1/chat/', include('thu_lost_and_found_backend.chat_service.urls'))
 ]
 
 # image links
