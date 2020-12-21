@@ -4,14 +4,13 @@ from rest_framework import serializers
 
 from thu_lost_and_found_backend.contact_service.models import Contact
 from thu_lost_and_found_backend.contact_service.serializer import ContactSimpleSerializer
-from thu_lost_and_found_backend.found_notice_service.models import FoundNotice, FoundNoticeStatus
 from thu_lost_and_found_backend.lost_notice_service.models import LostNotice
-from thu_lost_and_found_backend.matching_service.match import matching
-from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
 from thu_lost_and_found_backend.property_service.serializer import PropertySerializer
 from thu_lost_and_found_backend.user_service.models import User
 from thu_lost_and_found_backend.user_service.serializer import  UserSimpleSerializer
+
+from .tasks import create_matching_task, update_matching_task
 
 
 class LostNoticeSerializer(serializers.ModelSerializer):
@@ -33,12 +32,7 @@ class LostNoticeSerializer(serializers.ModelSerializer):
             lost_notice.contacts.add(contact)
         lost_notice.save()
 
-        # matching
-        found_notices = FoundNotice.objects.filter(status=FoundNoticeStatus.PUBLIC, property__template=lost_notice.property.template)
-        for found_notice in found_notices:
-            matching_degree = matching(lost_notice, found_notice)
-            matching_entry = MatchingEntry.objects.create(lost_notice=lost_notice, found_notice=found_notice, matching_degree=matching_degree)
-            matching_entry.save()
+        create_matching_task.delay(lost_notice.id)
 
         return lost_notice
 
@@ -51,7 +45,6 @@ class LostNoticeSerializer(serializers.ModelSerializer):
         lost_notice = serializers.ModelSerializer.update(self, instance, validated_data)
         lost_notice.author = User.objects.get(id=author_id)
 
-        # TODO: optimization ?
         # clean old notices
         for contact in lost_notice.contacts.all():
             if contact.found_notices.count() == 1:
@@ -64,12 +57,7 @@ class LostNoticeSerializer(serializers.ModelSerializer):
             lost_notice.contacts.add(contact)
         lost_notice.save()
 
-        # TODO: threading
-        # matching
-        for matching_entry in MatchingEntry.objects.filter(lost_notice=lost_notice):
-            matching_degree = matching(lost_notice, matching_entry.found_notice)
-            matching_entry.matching_degree = matching_degree
-            matching_entry.save()
+        update_matching_task.delay(lost_notice.id)
 
         return lost_notice
 

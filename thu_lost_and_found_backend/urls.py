@@ -36,11 +36,10 @@ urlpatterns = [
     path('api/v1/', include(router.urls)),
     path('api/v1/admin/', admin.site.urls),
     path('api/v1/auth/', include('thu_lost_and_found_backend.authentication_service.urls')),
-    path('api/v1/chat/', include('thu_lost_and_found_backend.chat_service.urls'))
+    path('api/v1/chat/', include('thu_lost_and_found_backend.chat_service.urls')),
 ]
 
 # image links
 # if /media/ is defined as the MEDIA_URL, the below statements are needed
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

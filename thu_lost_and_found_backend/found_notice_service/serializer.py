@@ -5,16 +5,13 @@ from rest_framework import serializers
 from thu_lost_and_found_backend.contact_service.models import Contact
 from thu_lost_and_found_backend.contact_service.serializer import ContactSimpleSerializer
 from thu_lost_and_found_backend.found_notice_service.models import FoundNotice
-from thu_lost_and_found_backend.lost_notice_service.models import LostNotice, LostNoticeStatus
 from thu_lost_and_found_backend.property_service.serializer import PropertySerializer
 from thu_lost_and_found_backend.user_service.models import User
-
-from thu_lost_and_found_backend.matching_service.match import matching, MATCHING_THRESHOLD
-from thu_lost_and_found_backend.matching_service.notify import matching_notify
-from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
-
 from thu_lost_and_found_backend.user_service.serializer import UserSimpleSerializer
+
+
+from .tasks import create_matching_task, update_matching_task
 
 
 class FoundNoticeSerializer(serializers.ModelSerializer):
@@ -23,7 +20,6 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
     author = UserSimpleSerializer(read_only=True)
     matching_entries = MatchingEntrySerializer(many=True, read_only=True)
 
-    # TODO: quizzes
 
     def create(self, validated_data):
         author_id = json.loads(validated_data.pop('extra'))['author']
@@ -38,18 +34,7 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
             found_notice.contacts.add(contact)
         found_notice.save()
 
-        # TODO: threading
-        # matching
-        lost_notices = LostNotice.objects.filter(status=LostNoticeStatus.PUBLIC, property__template=found_notice.property.template)
-        just_sent_users = []
-        for lost_notice in lost_notices:
-            matching_degree = matching(lost_notice, found_notice)
-            matching_entry = MatchingEntry.objects.create(lost_notice=lost_notice, found_notice=found_notice, matching_degree=matching_degree)
-            matching_entry.save()
-            # try to notify user
-            if matching_degree > MATCHING_THRESHOLD:
-                matching_notify(matching_entry, just_sent=lost_notice.author.id in just_sent_users)
-                just_sent_users.append(lost_notice.author.id)
+        create_matching_task.delay(found_notice.id)
 
         return found_notice
 
@@ -63,7 +48,6 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
         found_notice = serializers.ModelSerializer.update(self, instance, validated_data)
         found_notice.author = User.objects.get(id=author_id)
 
-        # TODO: optimization ?
         # clean old notices
         for contact in found_notice.contacts.all():
             if contact.found_notices.count() == 1:
@@ -76,18 +60,7 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
             found_notice.contacts.add(contact)
         found_notice.save()
 
-        # TODO: threading
-        # matching
-        just_sent_users = []
-        for matching_entry in MatchingEntry.objects.filter(found_notice=found_notice):
-            lost_notice = matching_entry.lost_notice
-            matching_degree = matching(lost_notice, found_notice)
-            matching_entry.matching_degree = matching_degree
-            matching_entry.save()
-            # try to notify user
-            if matching_degree > MATCHING_THRESHOLD:
-                matching_notify(matching_entry, lost_notice.author.id in just_sent_users)
-                just_sent_users.append(lost_notice.author.id)
+        update_matching_task.delay(found_notice.id)
 
         return found_notice
 

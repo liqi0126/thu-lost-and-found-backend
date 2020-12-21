@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-
+import channels.layers
 
 from thu_lost_and_found_backend.user_service.models import User
 from .models import Message
@@ -63,6 +63,9 @@ class ChatConsumer(WebsocketConsumer):
 
         if receiver.channel_name:
             message_obj.sent = True
+            if not hasattr(self, "channel_layer"):
+                self.channel_layer = channels.layers.get_channel_layer()
+
             async_to_sync(self.channel_layer.send)(
                 receiver.channel_name,
                 {
