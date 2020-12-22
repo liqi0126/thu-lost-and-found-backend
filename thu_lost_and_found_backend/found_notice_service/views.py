@@ -40,7 +40,7 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
             id_max = FoundNotice.objects.all().aggregate(Max('id'))['id__max']
             instance_id = id_max + 1 if id_max else 1
             images_url = save_uploaded_images(request, 'found_notice_images', instance_id=instance_id)
-            request.data['images'] = json.dumps({"images_url": images_url})
+            request.data['images'] = json.dumps({"url": images_url})
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -60,7 +60,7 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
             images_url = save_uploaded_images(request, 'found_notice_images', instance_id=instance.id)
             if instance.images is not None:
                 images_url += instance.images
-            request.data['images'] = json.dumps({"images_url": images_url})
+            request.data['images'] = json.dumps({"url": images_url})
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)

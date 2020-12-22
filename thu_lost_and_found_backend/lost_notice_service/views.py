@@ -44,7 +44,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
             instance_id = id_max + 1 if id_max else 1
             images_url = save_uploaded_images(request, 'lost_notice_images', instance_id=instance_id)
 
-            request.data['images'] = json.dumps({"images_url": images_url})
+            request.data['images'] = json.dumps({"url": images_url})
             # Update serializer
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
@@ -64,7 +64,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
             images_url = save_uploaded_images(request, 'lost_notice_images', instance_id=instance.id)
             if instance.images is not None:
                 images_url += instance.images
-            request.data['images'] = json.dumps({"images_url": images_url})
+            request.data['images'] = json.dumps({"url": images_url})
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
