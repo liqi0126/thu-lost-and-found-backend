@@ -20,7 +20,6 @@ class FoundNoticeSerializer(serializers.ModelSerializer):
     author = UserSimpleSerializer(read_only=True)
     matching_entries = MatchingEntrySerializer(many=True, read_only=True)
 
-
     def create(self, validated_data):
         author_id = json.loads(validated_data.pop('extra'))['author']
         contacts_data = validated_data.pop('contacts')

@@ -15,7 +15,7 @@ from rest_framework.response import Response
 
 from thu_lost_and_found_backend import settings
 from thu_lost_and_found_backend.helpers.toolkits import delete_instance_medias, check_missing_fields, random_string
-from thu_lost_and_found_backend.matching_service.match import MATCHING_THRESHOLD
+from thu_lost_and_found_backend.matching_service.match import MatchingHyperParam
 from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
 from thu_lost_and_found_backend.matching_service.views import MatchingEntryViewSet
@@ -53,7 +53,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path=r'get-high-matching-entry')
     def get_high_matching_entry(self, request, pk):
-        queryset = MatchingEntry.objects.filter(lost_notice__author=pk, matching_degree__gt=MATCHING_THRESHOLD)
+        queryset = MatchingEntry.objects.filter(lost_notice__author=pk, matching_degree__gt=MatchingHyperParam.get_matching_threshold())
         page = MatchingEntryViewSet.paginate_queryset(self, queryset=queryset)
         if page is not None:
             serializer = MatchingEntrySerializer(page, many=True)

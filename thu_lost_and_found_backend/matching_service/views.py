@@ -1,9 +1,31 @@
 from rest_framework import viewsets
 from rest_framework.pagination import CursorPagination
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+from .models import MatchingEntry, MatchingHyperParam
+from .serializer import MatchingEntrySerializer, MatchingHyperParamSerializer
+from .tasks import update_matching_task
 
 
-from .models import MatchingEntry
-from .serializer import MatchingEntrySerializer
+class MatchingHyperParamViewSet(viewsets.ModelViewSet):
+    queryset = MatchingHyperParam.objects.all()
+    serializer_class = MatchingHyperParamSerializer
+
+    @action(detail=False, methods=['get'], url_path=r'get-hyper')
+    def get_hyper(self, request):
+        instance = MatchingHyperParam.get_hyper()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['post'], url_path=r'update-hyper')
+    def update_hyper(self, request):
+        instance = MatchingHyperParam.get_hyper()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        update_matching_task.delay()
+        return Response(serializer.data)
 
 
 class MatchingEntryViewSet(viewsets.ModelViewSet):
