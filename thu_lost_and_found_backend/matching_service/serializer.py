@@ -1,6 +1,12 @@
 from rest_framework import serializers
 
-from .models import MatchingEntry
+from .models import MatchingEntry, MatchingHyperParam
+
+
+class MatchingHyperParamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MatchingHyperParam
+        fields = '__all__'
 
 
 class MatchingEntrySerializer(serializers.ModelSerializer):

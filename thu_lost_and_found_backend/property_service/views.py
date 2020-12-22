@@ -6,6 +6,8 @@ from thu_lost_and_found_backend.property_service.models import PropertyType, Pro
 from thu_lost_and_found_backend.property_service.serializer import PropertyTypeSerializer, PropertyTemplateSerializer, \
     PropertySerializer
 
+from thu_lost_and_found_backend.matching_service.tasks import update_matching_task
+
 
 class PropertyTypeViewSet(viewsets.ModelViewSet):
     queryset = PropertyType.objects.all()
@@ -25,6 +27,10 @@ class PropertyTemplateViewSet(viewsets.ModelViewSet):
     filterset_fields = ['name', 'type__name']
     search_fields = ['name', 'type__name']
     # permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def perform_update(self, serializer):
+        update_matching_task(self.kwargs['id'])
+        serializer.save()
 
     def perform_destroy(self, instance):
         delete_instance_medias(instance, 'thumbnail')
