@@ -122,9 +122,9 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path=r'stat-timeline')
     def stat_timeline(self, request):
-        start_time = parse_datetime(request.data['start_time'])
-        end_time = parse_datetime(request.data['end_time'])
-        date_type = request.data['type']
+        start_time = parse_datetime(request.query_params['start_time'])
+        end_time = parse_datetime(request.query_params['end_time'])
+        date_type = request.query_params['type']
         queryset = LostNotice.objects.filter(created_at__range=(start_time, end_time))
 
         if date_type == 'year':

@@ -116,11 +116,15 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         notice.save()
         return Response('ok')
 
+    @action(methods=['post'], detail=False, url_path='stat-timeline/(?P<user_id>.+)', url_name='stat-timeline')
+    def get_favorite_post(self, request, start_time, end_time, type):
+        pass
+
     @action(detail=False, methods=['get'], url_path=r'stat-timeline')
     def stat_timeline(self, request):
-        start_time = parse_datetime(request.data['start_time'])
-        end_time = parse_datetime(request.data['end_time'])
-        date_type = request.data['type']
+        start_time = parse_datetime(request.query_params['start_time'])
+        end_time = parse_datetime(request.query_params['end_time'])
+        date_type = request.query_params['type']
         queryset = FoundNotice.objects.filter(created_at__range=(start_time, end_time))
 
         if date_type == 'year':
