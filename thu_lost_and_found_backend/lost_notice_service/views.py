@@ -14,13 +14,15 @@ from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, de
 from thu_lost_and_found_backend.lost_notice_service.models import LostNotice, LostNoticeStatus
 from thu_lost_and_found_backend.lost_notice_service.serializer import LostNoticeSerializer
 
+from thu_lost_and_found_backend.authentication_service.permission import NoticePermission
+
 
 class LostNoticeViewSet(viewsets.ModelViewSet):
     queryset = LostNotice.objects.all()
     serializer_class = LostNoticeSerializer
     pagination_class = CursorPagination
     ordering = ['-updated_at']
-    # permission_classes = [NoticePermission]
+    permission_classes = [NoticePermission]
 
     filterset_fields = ['status', 'est_lost_start_datetime', 'est_lost_end_datetime',
                         'updated_at', 'created_at',
@@ -33,9 +35,8 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
                      'author__username', 'extra']
 
     def create(self, request, *args, **kwargs):
-
-        # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":2}'
+        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        # request.data['extra'] = '{"author":2}'
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -57,8 +58,8 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
-        # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":2}'
+        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        # request.data['extra'] = '{"author":2}'
 
         if len(request.FILES) != 0:
             images_url = save_uploaded_images(request, 'lost_notice_images', instance_id=instance.id)

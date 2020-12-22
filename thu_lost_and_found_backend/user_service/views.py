@@ -11,9 +11,11 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
 from thu_lost_and_found_backend import settings
+from thu_lost_and_found_backend.authentication_service.permission import SuperAdminOnlyPermission, UserPermission
 from thu_lost_and_found_backend.helpers.toolkits import delete_instance_medias, check_missing_fields, random_string
 from thu_lost_and_found_backend.matching_service.match import MatchingHyperParam
 from thu_lost_and_found_backend.matching_service.models import MatchingEntry
@@ -34,7 +36,7 @@ class UserViewSet(viewsets.ModelViewSet):
                         'student_id', 'status', 'is_staff', 'is_superuser', 'is_active', 'is_verified']
 
     search_fields = ['first_name', 'last_name', 'username', 'student_id', 'status']
-    #    permission_classes = [UserPermission]
+    permission_classes = [UserPermission]
 
     def perform_destroy(self, instance):
         delete_instance_medias(instance, 'avatar')
@@ -77,19 +79,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(reply)
 
-    @action(methods=['post'], url_path=r'web_thu_auth', detail=False)
-    def web_auth(self, request):
-        ticket = request.data['ticket']
-        url = f"https://alumni-test.iterator-traits.com/fake-id-tsinghua/thuser/authapi/checkticket/THULOSTANDFOUND/{ticket}/154_8_201_138"
-
-        reply = requests.get(url)
-
-        if reply.status_code == 200:
-            # TODO: do we need thu auth for web?
-            pass
-
-        return Response(reply)
-
     @action(methods=['get'], url_path=r'statistic', detail=False)
     def statistic(self, request):
         return Response({
@@ -107,14 +96,14 @@ class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
     serializer_class = UserVerificationApplicationSerializer
     filterset_fields = ['status', 'user__username']
     search_fields = ['status', 'user__username', 'description']
-    #    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
 
 class UserInvitationViewSet(viewsets.ModelViewSet):
     queryset = UserInvitation.objects.all()
     serializer_class = UserInvitationSerializer
 
-    #    permission_classes = [SuperAdminOnlyPermission]
+    permission_classes = [SuperAdminOnlyPermission]
 
     def create(self, request, *args, **kwargs):
         request.POST._mutable = True
@@ -198,7 +187,7 @@ class UserEmailVerificationViewSet(viewsets.ModelViewSet):
     queryset = UserEmailVerification.objects.all()
     serializer_class = UserEmailVerificationSerializer
 
-    #    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
 
