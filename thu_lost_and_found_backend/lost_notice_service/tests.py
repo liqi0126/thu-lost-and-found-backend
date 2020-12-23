@@ -31,6 +31,32 @@ class LostNoticeTestCase(TestCase):
 
     def test_create(self):
         self.client.login(username='john', password='secret')
+        data = {
+            "contacts": [
+                {
+                    "name": "bob",
+                    "method": "PHN",
+                    "details": "1234"
+                }
+            ],
+            "property": {
+                "template": "iphone",
+                "tags": [
+                ],
+                "name": "My New Iphone",
+                "attributes": {"serial": 123},
+                "description": "My Lost Iphone"
+            },
+            "description": "My Lost Notice",
+            "lost_location": '{"name": "清华大学紫荆学生公寓4号楼","address": "北京市海淀区 ", \
+                          "latitude": 40.0104, "longitude": 116.327391}"',
+            "status": "PUB"
+        }
+        response = self.client.post('/api/v1/lost-notices/', data=data, content_type='application/json')
+        self.assertEqual(response.status_code, 201)
+        get_response = self.client.get('/api/v1/lost-notices/2/?format=json')
+        self.assertEqual(get_response.status_code, 200)
+        self.assertEqual(get_response.json()['id'], 2)
 
     def test_list(self):
         response = self.client.get('/api/v1/lost-notices/?format=json')
