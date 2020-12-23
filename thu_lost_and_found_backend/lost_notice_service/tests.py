@@ -34,12 +34,6 @@ class LostNoticeTestCase(APITestCase):
         refresh = RefreshToken.for_user(self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
 
-    def test_detail(self):
-        response = self.client.get(f'/api/v1/lost-notices/{self.notice.id}/?format=json')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['id'], self.notice.id)
-
     def test_create(self):
         data = {
             "contacts": [
@@ -73,8 +67,41 @@ class LostNoticeTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()['results']), 1)
 
+    def test_detail(self):
+        response = self.client.get(f'/api/v1/lost-notices/{self.notice.id}/?format=json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['id'], self.notice.id)
+
     def test_update(self):
-        pass
+        data = {
+            "contacts": [
+                {
+                    "name": "bob",
+                    "method": "PHN",
+                    "details": "1234"
+                }
+            ],
+            "property": {
+                "template": "iphone",
+                "tags": [
+                ],
+                "name": "My New Iphone",
+                "attributes": {"serial": 123},
+                "description": "My Lost Iphone"
+            },
+            "description": "My New Description",
+            "lost_location": '{"name": "清华大学紫荆学生公寓4号楼","address": "北京市海淀区 ", \
+                          "latitude": 40.0104, "longitude": 116.327391}"',
+            "status": "PUB"
+        }
+        response = self.client.patch(f'/api/v1/lost-notices/{self.notice.id}/?format=json',
+                                     data=data, format='json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['description'], 'My New Description')
 
     def test_delete(self):
-        pass
+        response = self.client.delete(f'/api/v1/lost-notices/{self.notice.id}/?format=json')
+        self.assertEqual(response.status_code, 204)
+        get_response = self.client.get('/api/v1/lost-notices/?format=json')
+        self.assertEqual(get_response.status_code, 200)
+        self.assertEqual(len(get_response.json()['results']), 0)
