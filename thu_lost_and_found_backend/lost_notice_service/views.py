@@ -35,8 +35,9 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
                      'author__username', 'extra']
 
     def create(self, request, *args, **kwargs):
+        request.POST._mutable = True
         request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        # request.data['extra'] = '{"author":2}'
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -59,7 +60,6 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        # request.data['extra'] = '{"author":2}'
 
         if len(request.FILES) != 0:
             images_url = save_uploaded_images(request, 'lost_notice_images', instance_id=instance.id)
