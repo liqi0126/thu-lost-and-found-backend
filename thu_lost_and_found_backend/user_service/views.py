@@ -133,7 +133,7 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
     queryset = UserInvitation.objects.all()
     serializer_class = UserInvitationSerializer
 
-    permission_classes = [SuperAdminOnlyPermission]
+    permission_classes = []
 
     def create(self, request, *args, **kwargs):
         request.POST._mutable = True
