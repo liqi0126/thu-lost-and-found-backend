@@ -18,7 +18,7 @@ class SuperAdminOnlyPermission(permissions.BasePermission):
 
 
 class NoticePermission(permissions.BasePermission):
-    message = 'Notice'
+    message = 'Notice permission denied'
 
     def has_permission(self, request, view):
         path = request.path
