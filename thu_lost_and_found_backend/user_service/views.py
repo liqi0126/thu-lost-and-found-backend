@@ -167,7 +167,7 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
                   message='',
                   html_message=invitation_template.format(
                       role=request.data['role'],
-                      invitation_link=f'{settings.APP_URL}/#/invitation/f{request.data["token"]}/',
+                      invitation_link=f'{settings.APP_URL}/#/invitation/{request.data["token"]}/',
                       expiration_date=request.data['expiration_date'].strftime('%d-%m-%Y')
                   ),
 
@@ -254,7 +254,7 @@ class UserEmailVerificationViewSet(viewsets.ModelViewSet):
                   message='',
                   html_message=email_verification_template.format(
                       username=user.username,
-                      verification_link=f'{settings.APP_URL}/#/email-verification/f{request.data["token"]}/',
+                      verification_link=f'{settings.APP_URL}/#/email-verification/{request.data["token"]}/',
                       expiration_date=request.data['expiration_date'].strftime('%d-%m-%Y')
                   ),
                   from_email=f'"{settings.EMAIL_DISPLAY_NAME}" <{settings.EMAIL_HOST_USER}>',
