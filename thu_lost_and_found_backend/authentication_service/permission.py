@@ -31,10 +31,10 @@ class NoticePermission(permissions.BasePermission):
             if not user.is_authenticated:
                 return False
 
-            lost_notice_match = re.match(string=path, pattern=r'^/lost-notices/(\d+)/')
+            lost_notice_match = re.match(string=path, pattern=r'^/api/v1/lost-notices/(\d+)/')
             lost_notice_id = lost_notice_match.group(1) if lost_notice_match else None
 
-            found_notice_match = re.match(string=path, pattern=r'^/found-notices/(\d+)/')
+            found_notice_match = re.match(string=path, pattern=r'^/api/v1/found-notices/(\d+)/')
             found_notice_id = found_notice_match.group(1) if found_notice_match else None
 
             author = None
@@ -50,7 +50,7 @@ class NoticePermission(permissions.BasePermission):
         # If GET request
         else:
             # Only staff can filter list status, else status = PUB
-            if re.match(string=path, pattern=r'^/(lost|found)-notices/$'):
+            if re.match(string=path, pattern=r'^/api/v1/(lost|found)-notices/$'):
                 request.GET._mutable = True
                 if not user.is_staff:
                     # User can filter own posts by status
@@ -76,7 +76,7 @@ class UserPermission(permissions.BasePermission):
         user = request.user
         path = request.path
 
-        if re.match(string=path, pattern=r'^/users/(\d+)/simple-info/$'):
+        if re.match(string=path, pattern=r'^/api/v1/users/(\d+)/simple-info/$'):
             return True
 
         if user != obj and not user.is_staff:
