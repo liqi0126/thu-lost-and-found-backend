@@ -34,15 +34,10 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
                      'author__username', 'extra']
 
     def create(self, request, *args, **kwargs):
-<<<<<<< HEAD
         request.POST._mutable = True
 
         request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-=======
-        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        # request.data['extra'] = '{"author":2}'
         request.POST._mutable = True
->>>>>>> add-tests
 
         if len(request.FILES) != 0:
             id_max = FoundNotice.objects.all().aggregate(Max('id'))['id__max']

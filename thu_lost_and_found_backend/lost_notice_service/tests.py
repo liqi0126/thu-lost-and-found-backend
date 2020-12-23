@@ -15,7 +15,6 @@ class LostNoticeTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
 
-<<<<<<< HEAD
         self.user = User.objects.create(username='john', password=make_password('secret'), first_name='Thu',
                                         last_name='Student',
                                         is_verified=True, status='ACT', is_staff=False, is_superuser=False,
@@ -26,16 +25,11 @@ class LostNoticeTestCase(APITestCase):
 
         self.notice = LostNotice.objects.create(
             property=Property.objects.create(name='My Iphone', template=self.property_template,
-=======
-        lostnotice = LostNotice.objects.create(
-            property=Property.objects.create(name='My Iphone', template=property_template,
->>>>>>> add-tests
                                              attributes='{"serial": 123}'),
             lost_location='{"name": "清华大学紫荆学生公寓4号楼","address": "北京市海淀区 ", \
                           "latitude": 40.0104, "longitude": 116.327391}"',
             author=self.user
         )
-        lostnotice.save()
 
         refresh = RefreshToken.for_user(self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
