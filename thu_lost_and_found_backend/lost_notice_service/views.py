@@ -2,8 +2,8 @@ import json
 
 from django.db.models import Max, Count
 from django.db.models.functions import TruncYear, TruncMonth, TruncDay
-from django.utils.dateparse import parse_datetime
 from django.http import HttpResponseBadRequest
+from django.utils.dateparse import parse_datetime
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
@@ -81,6 +81,32 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         delete_instance_medias(instance, 'images', json=True)
         instance.delete()
 
+    @action(detail=False, methods=['get'], url_path=r'index')
+    def index(self, request):
+
+        data = {'total': 0, 'results': []}
+
+        notices = LostNotice.objects.all()
+        data['total'] = notices.count()
+
+        start = int(request.GET['start']) if 'start' in request.GET else 0
+        end = int(request.GET['end']) if 'end' in request.GET else 9
+
+        if end + 1 > data['total']:
+            end = data['total']
+        elif end < 0:
+            end = 0
+
+        if start < 0 or start + 1 > data['total']:
+            start = 0
+
+        sliced_notices = notices[start: end + 1]
+
+        for notice in sliced_notices:
+            data['results'].append(LostNoticeSerializer(notice).data)
+
+        return Response(data)
+
     # TODO: update json images
     @action(detail=False, methods=['post'], url_path=r'upload-image')
     def upload_image(self, request):
@@ -119,7 +145,6 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         notice.save()
         return Response('ok')
 
-
     @action(detail=False, methods=['get'], url_path=r'stat-timeline')
     def stat_timeline(self, request):
         start_time = parse_datetime(request.query_params['start_time'])
@@ -128,11 +153,14 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
         queryset = LostNotice.objects.filter(created_at__range=(start_time, end_time))
 
         if date_type == 'year':
-            queryset = queryset.annotate(month=TruncYear('created_at')).values('year').annotate(count=Count('id')).values('year', 'count')
+            queryset = queryset.annotate(month=TruncYear('created_at')).values('year').annotate(
+                count=Count('id')).values('year', 'count')
         if date_type == 'month':
-            queryset = queryset.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).values('month', 'count')
+            queryset = queryset.annotate(month=TruncMonth('created_at')).values('month').annotate(
+                count=Count('id')).values('month', 'count')
         else:
-            queryset = queryset.annotate(day=TruncDay('created_at')).values('day').annotate(count=Count('id')).values('day', 'count')
+            queryset = queryset.annotate(day=TruncDay('created_at')).values('day').annotate(count=Count('id')).values(
+                'day', 'count')
 
         return Response(queryset)
 
