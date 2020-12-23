@@ -36,11 +36,7 @@ def matching(lost_notice, found_notice):
     # cannot matched cases
     ###########################################
     if lost_property.template_id != found_property.template_id:
-        return -1
-
-    if lost_notice.est_lost_start_datetime is not None and found_notice.found_datetime is not None:
-        if lost_notice.est_lost_start_datetime > found_notice.found_datetime:
-            return -1
+        return 0
 
     ###########################################
     # NOTICE
@@ -60,13 +56,14 @@ def matching(lost_notice, found_notice):
 
     # time
     if lost_notice.est_lost_start_datetime is not None and found_notice.found_datetime is not None:
-        base += matching_hyper.notice_time_weight
         if lost_notice.est_lost_start_datetime > found_notice.found_datetime:
-            match_degree += 0
-        elif (found_notice.found_datetime - lost_notice.est_lost_start_datetime).days <= 5:
+            base += matching_hyper.notice_mismatched_time_weight * 2*(sigmoid((lost_notice.est_lost_start_datetime - found_notice.found_datetime).days) - 0.5)
+        elif (found_notice.found_datetime - lost_notice.est_lost_end_datetime).days <= 5:
             match_degree += matching_hyper.notice_time_weight
+            base += matching_hyper.notice_time_weight
         else:
-            match_degree += matching_hyper.notice_time_weight * (1 - 2 * sigmoid((found_notice.found_datetime - lost_notice.est_lost_start_datetime).days - 5) - 0.5)
+            match_degree += matching_hyper.notice_time_weight * (1 - 2*(sigmoid((found_notice.found_datetime - lost_notice.est_lost_end_datetime).days - 5) - 0.5))
+            base += matching_hyper.notice_time_weight
 
     logging.info(f"time: {match_degree} / {base} = {match_degree/base}")
 
@@ -131,7 +128,7 @@ def matching(lost_notice, found_notice):
 
     # property extra
     if lost_property.extra is not None and found_property.extra is not None:
-        property_extra_matching_degree = matching_hyper.prop_extra_weight * word_matching_num(lost_property_desc, found_property_desc)
+        property_extra_matching_degree = matching_hyper.prop_extra_weight * json_matching_num(lost_property.extra, found_property.extra)
         base += property_extra_matching_degree
         match_degree += property_extra_matching_degree
 

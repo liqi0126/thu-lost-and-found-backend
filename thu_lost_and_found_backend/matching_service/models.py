@@ -8,8 +8,9 @@ from thu_lost_and_found_backend.found_notice_service.models import FoundNotice
 class MatchingHyperParam(models.Model):
     matching_threshold = models.FloatField(default=0.5)
 
-    notice_location_weight = models.FloatField(default=2)
-    notice_time_weight = models.FloatField(default=2)
+    notice_location_weight = models.FloatField(default=2.)
+    notice_mismatched_time_weight = models.FloatField(default=3.)
+    notice_time_weight = models.FloatField(default=1)
     notice_desc_weight = models.FloatField(default=0.5)
     notice_extra_weight = models.FloatField(default=1.)
 

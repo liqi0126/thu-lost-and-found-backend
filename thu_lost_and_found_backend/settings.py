@@ -30,7 +30,14 @@ APP_URL = env('APP_URL')
 
 ALLOWED_HOSTS = ['*']
 
+<<<<<<< HEAD
 CORS_ORIGIN_ALLOW_ALL = DEBUG
+=======
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost",
+    "http://127.0.0.1"
+]
+>>>>>>> add-tests
 
 # Application definition
 
@@ -51,7 +58,6 @@ INSTALLED_APPS = [
     'thu_lost_and_found_backend',
     'thu_lost_and_found_backend.authentication_service.apps.AuthenticationServiceConfig',
     'thu_lost_and_found_backend.contact_service.apps.ContactServiceConfig',
-    'thu_lost_and_found_backend.dashboard_service.apps.DashboardServiceConfig',
     'thu_lost_and_found_backend.found_notice_service.apps.FoundNoticeServiceConfig',
     'thu_lost_and_found_backend.lost_notice_service.apps.LostNoticeServiceConfig',
     'thu_lost_and_found_backend.property_service.apps.PropertyServiceConfig',
