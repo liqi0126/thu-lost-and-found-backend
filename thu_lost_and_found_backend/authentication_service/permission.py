@@ -43,9 +43,10 @@ class NoticePermission(permissions.BasePermission):
             elif found_notice_id:
                 author = get_object_or_404(FoundNotice, pk=found_notice_id).author
 
-            # Reject if user is not author or staff
-            if author != user and not user.is_staff:
-                return False
+            if lost_notice_id or found_notice_id:
+                # Reject if user is not author or staff
+                if author != user and not user.is_staff:
+                    return False
 
         # If GET request
         else:
