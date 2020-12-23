@@ -6,6 +6,7 @@ import requests
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.db import IntegrityError
+from django.db.models import Max
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -14,7 +15,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from thu_lost_and_found_backend import settings
-from thu_lost_and_found_backend.helpers.toolkits import delete_instance_medias, check_missing_fields, random_string
+from thu_lost_and_found_backend.helpers.toolkits import delete_instance_medias, check_missing_fields, random_string, \
+    save_uploaded_images, delete_media_from_url
 from thu_lost_and_found_backend.matching_service.match import MatchingHyperParam
 from thu_lost_and_found_backend.matching_service.models import MatchingEntry
 from thu_lost_and_found_backend.matching_service.serializer import MatchingEntrySerializer
@@ -100,6 +102,33 @@ class UserViewSet(viewsets.ModelViewSet):
             'verified': User.objects.filter(is_verified=True).count(),
             'staff': User.objects.filter(is_staff=True).count()
         })
+
+    @action(detail=False, methods=['post'], url_path=r'upload-avatar')
+    def upload_avatar(self, request):
+        if 'id' in request.data:
+            instance_id = request.data['id']
+        else:
+            id_max = User.objects.all().aggregate(Max('id'))['id__max']
+            instance_id = id_max + 1 if id_max else 1
+
+        result = save_uploaded_images(request, 'user_avatars', instance_id=instance_id)
+        if result:
+            return Response({'url': result})
+        else:
+            return HttpResponseBadRequest()
+
+    @action(detail=False, methods=['post'], url_path=r'delete-avatar')
+    def delete_avatar(self, request):
+        if 'url' in request.data:
+            image_url = request.data['url']
+        else:
+            return HttpResponseBadRequest('url is required.')
+
+        try:
+            delete_media_from_url(image_url)
+            return Response('Image deleted')
+        except (ValueError, OSError) as error:
+            return HttpResponseBadRequest(error)
 
 
 class UserVerificationApplicationViewSet(viewsets.ModelViewSet):
