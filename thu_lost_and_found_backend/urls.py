@@ -17,6 +17,9 @@ from thu_lost_and_found_backend.user_service.views import UserInvitationViewSet,
 from thu_lost_and_found_backend.user_service.views import UserViewSet
 from thu_lost_and_found_backend.matching_service.views import MatchingEntryViewSet, MatchingHyperParamViewSet
 
+from django.conf.urls import url
+from django.views.generic import TemplateView
+
 router = routers.DefaultRouter()
 router.register(r'property-types', PropertyTypeViewSet)
 router.register(r'property-templates', PropertyTemplateViewSet)
@@ -34,6 +37,7 @@ router.register(r'user-verification-applications', UserVerificationApplicationVi
 router.register(r'reports', ReportViewSet)
 
 urlpatterns = [
+    url(r'^$', TemplateView.as_view(template_name="index.html")),
     path('api/v1/', include(router.urls)),
     path('api/v1/admin/', admin.site.urls),
     path('api/v1/auth/', include('thu_lost_and_found_backend.authentication_service.urls')),
