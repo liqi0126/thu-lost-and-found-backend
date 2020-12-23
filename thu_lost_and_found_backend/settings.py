@@ -207,11 +207,11 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('redis', 6379)],
+            "hosts": [(env('REDIS_HOST'), 6379)],
         },
     },
 }
 
 # CELERY STUFF
-CELERY_BROKER_URL = "redis://redis:6379/0"
-CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+CELERY_BROKER_URL = "redis://" + env('REDIS_HOST') + ":6379/0"
+CELERY_RESULT_BACKEND = "redis://" + env('REDIS_HOST') + ":6379/0"
