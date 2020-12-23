@@ -10,6 +10,7 @@ from django.db.models import Max
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.timezone import make_aware
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -138,7 +139,7 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
         request.POST._mutable = True
         request.data['token'] = random_string(64)
         # if 'expiration_date' not in request.data:
-        request.data['expiration_date'] = datetime.now() + timedelta(weeks=2)
+        request.data['expiration_date'] = make_aware(datetime.now() + timedelta(weeks=2))
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -196,7 +197,7 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
                     status='ACT',
                     is_staff=True if invitation.role == 'STF' or invitation.role == 'ADM' else False,
                     is_superuser=True if invitation.role == 'ADM' else False,
-                    date_joined=datetime.now()
+                    date_joined=make_aware(datetime.now())
                 )
             except (IntegrityError, TypeError) as error:
                 return HttpResponseBadRequest(error)
@@ -223,7 +224,7 @@ class UserEmailVerificationViewSet(viewsets.ModelViewSet):
         request.POST._mutable = True
         request.data['token'] = random_string(64)
         if 'expiration_date' not in request.data:
-            request.data['expiration_date'] = datetime.now() + timedelta(weeks=2)
+            request.data['expiration_date'] = make_aware(datetime.now() + timedelta(weeks=2))
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
