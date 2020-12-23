@@ -68,14 +68,14 @@ class MatchingEntryTestCase(APITestCase):
     def test_student_card_ID_matched(self):
         threshold = MatchingHyperParam.get_matching_threshold()
 
-        student_card1 = Property(name="李祁的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "黑色"})
+        student_card1 = Property(name="李祁的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "黑色"}, description="李祁的学生卡")
         student_card1.save()
-        student_card2 = Property(name="徐亦豪的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "白色"})
+        student_card2 = Property(name="徐亦豪的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "白色"}, description="一张学生卡")
         student_card2.save()
 
-        lost_notice = LostNotice.objects.create(property=student_card1, author=self.user1, lost_location={"locations": [self.location_pku]})
+        lost_notice = LostNotice.objects.create(property=student_card1, author=self.user1, lost_location={"locations": [self.location_pku]}, description="在北馆丢失了一张学生卡")
         lost_notice.save()
-        found_notice = FoundNotice.objects.create(property=student_card2, author=self.user2, found_location=self.location_thu, found_datetime=self.datetime1)
+        found_notice = FoundNotice.objects.create(property=student_card2, author=self.user2, found_location=self.location_thu, found_datetime=self.datetime1, description="在西操捡到了一张学生卡")
         found_notice.save()
 
         matching_degree = matching(lost_notice=lost_notice, found_notice=found_notice)
@@ -117,3 +117,20 @@ class MatchingEntryTestCase(APITestCase):
         response = self.client.post("/api/v1/matching-entries/1/matching-notify/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_extra(self):
+        student_card1 = Property(name="李祁的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "黑色"}, description="李祁的学生卡")
+        student_card1.save()
+        student_card2 = Property(name="徐亦豪的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "白色"}, description="一张学生卡")
+        student_card2.save()
+
+        lost_notice = LostNotice.objects.create(property=student_card1, author=self.user1, lost_location={"locations": [self.location_pku]}, description="在北馆丢失了一张学生卡")
+        lost_notice.save()
+        found_notice = FoundNotice.objects.create(property=student_card2, author=self.user2, found_location=self.location_thu, found_datetime=self.datetime1, description="在西操捡到了一张学生卡")
+        found_notice.save()
+
+        matching_degree = matching(lost_notice=lost_notice, found_notice=found_notice)
+        matching_entry = MatchingEntry.objects.create(lost_notice=lost_notice, found_notice=found_notice, matching_degree=matching_degree)
+        matching_entry.save()
+
+        self.assertEqual()
