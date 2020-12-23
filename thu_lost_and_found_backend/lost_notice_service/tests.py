@@ -1,18 +1,20 @@
 from datetime import datetime
 
 from django.contrib.auth.hashers import make_password
-from django.test import TestCase, Client
 from django.utils.timezone import make_aware
+from rest_framework.test import APITestCase, APIClient
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from thu_lost_and_found_backend.lost_notice_service.models import LostNotice
 from thu_lost_and_found_backend.property_service.models import PropertyType, PropertyTemplate, Property
 from thu_lost_and_found_backend.user_service.models import User
 
 
-class LostNoticeTestCase(TestCase):
+class LostNoticeTestCase(APITestCase):
 
     def setUp(self):
-        self.client = Client()
+        self.client = APIClient()
+
         self.user = User.objects.create(username='john', password=make_password('secret'), first_name='Thu',
                                         last_name='Student',
                                         is_verified=True, status='ACT', is_staff=False, is_superuser=False,
@@ -29,6 +31,9 @@ class LostNoticeTestCase(TestCase):
             author=self.user
         )
 
+        refresh = RefreshToken.for_user(self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+
     def test_detail(self):
         response = self.client.get(f'/api/v1/lost-notices/{self.notice.id}/?format=json')
 
@@ -36,7 +41,6 @@ class LostNoticeTestCase(TestCase):
         self.assertEqual(response.json()['id'], self.notice.id)
 
     def test_create(self):
-        self.client.login(username='john', password='secret')
         data = {
             "contacts": [
                 {
@@ -58,7 +62,7 @@ class LostNoticeTestCase(TestCase):
                           "latitude": 40.0104, "longitude": 116.327391}"',
             "status": "PUB"
         }
-        response = self.client.post('/api/v1/lost-notices/', data=data, content_type='application/json')
+        response = self.client.post('/api/v1/lost-notices/', data=data, format='json')
         self.assertEqual(response.status_code, 201)
         get_response = self.client.get('/api/v1/lost-notices/2/?format=json')
         self.assertEqual(get_response.status_code, 200)
