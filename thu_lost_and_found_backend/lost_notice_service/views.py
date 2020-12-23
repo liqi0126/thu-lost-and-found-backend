@@ -86,7 +86,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
 
         data = {'total': 0, 'results': []}
 
-        notices = LostNotice.objects.all()
+        notices = LostNotice.objects.all().order_by('-updated_at')
         data['total'] = notices.count()
 
         start = int(request.GET['start']) if 'start' in request.GET else 0
