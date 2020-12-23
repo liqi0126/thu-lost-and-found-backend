@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.contrib.auth.hashers import make_password
 from django.utils.timezone import make_aware
+from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -13,8 +14,6 @@ from thu_lost_and_found_backend.user_service.models import User
 class LostNoticeTestCase(APITestCase):
 
     def setUp(self):
-        self.client = APIClient()
-
         self.user = User.objects.create(username='john', password=make_password('secret'), first_name='Thu',
                                         last_name='Student',
                                         is_verified=True, status='ACT', is_staff=False, is_superuser=False,
@@ -106,10 +105,3 @@ class LostNoticeTestCase(APITestCase):
         get_response = self.client.get(f'/api/v1/lost-notices/{self.notice.id}/?format=json')
         self.assertEqual(get_response.status_code, 200)
         self.assertEqual(get_response.json()['status'], 'CLS')
-
-    def test_delete(self):
-        response = self.client.delete(f'/api/v1/lost-notices/{self.notice.id}/?format=json')
-        self.assertEqual(response.status_code, 204)
-        get_response = self.client.get('/api/v1/lost-notices/?format=json')
-        self.assertEqual(get_response.status_code, 200)
-        self.assertEqual(len(get_response.json()['results']), 0)
