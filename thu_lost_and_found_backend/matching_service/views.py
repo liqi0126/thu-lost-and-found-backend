@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from rest_framework.pagination import CursorPagination
+from rest_framework.pagination import CursorPagination, LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -32,7 +32,7 @@ class MatchingHyperParamViewSet(viewsets.ModelViewSet):
 class MatchingEntryViewSet(viewsets.ModelViewSet):
     queryset = MatchingEntry.objects.all()
     serializer_class = MatchingEntrySerializer
-    pagination_class = CursorPagination
+    pagination_class = LimitOffsetPagination
     ordering = ['matching_degree']
     filter_fields = ['lost_notice_id', 'found_notice_id']
 
