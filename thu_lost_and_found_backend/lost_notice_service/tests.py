@@ -99,6 +99,14 @@ class LostNoticeTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['description'], 'My New Description')
 
+    def test_change_status(self):
+        response = self.client.post(f'/api/v1/lost-notices/{self.notice.id}/change-status/?format=json',
+                                    {'status': 'CLS'})
+        self.assertEqual(response.status_code, 200)
+        get_response = self.client.get(f'/api/v1/lost-notices/{self.notice.id}/?format=json')
+        self.assertEqual(get_response.status_code, 200)
+        self.assertEqual(get_response.json()['status'], 'CLS')
+
     def test_delete(self):
         response = self.client.delete(f'/api/v1/lost-notices/{self.notice.id}/?format=json')
         self.assertEqual(response.status_code, 204)
