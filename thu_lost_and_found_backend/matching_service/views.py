@@ -37,6 +37,7 @@ class MatchingEntryViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     ordering = ['matching_degree']
     filter_fields = ['lost_notice_id', 'found_notice_id']
+    permission_classes = []
 
     @action(detail=True, methods=['post'], url_path='matching-notify')
     def matching_notify(self, request, pk):
