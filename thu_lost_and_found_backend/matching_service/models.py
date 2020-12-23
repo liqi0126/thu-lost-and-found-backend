@@ -21,10 +21,12 @@ class MatchingHyperParam(models.Model):
 
     @staticmethod
     def get_hyper():
-        if MatchingHyperParam.objects.count() == 0:
+        if MatchingHyperParam.objects.last() is not None:
+            instance = MatchingHyperParam.objects.last()
+        else:
             instance = MatchingHyperParam.objects.create()
             instance.save()
-        return MatchingHyperParam.objects.get(pk=1)
+        return instance
 
     @staticmethod
     def get_matching_threshold():
