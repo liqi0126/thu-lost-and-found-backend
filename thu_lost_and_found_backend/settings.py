@@ -30,6 +30,10 @@ APP_URL = env('APP_URL')
 
 ALLOWED_HOSTS = ['*']
 
+CORS_ALLOWED_ORIGINS = [
+    "*"
+]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_filters',
 
+    'corsheaders',
     'channels',
     'rest_framework',
 
@@ -63,13 +68,14 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    # 'thu_lost_and_found_backend.authentication_service.middleware.JWTAuthenticationMiddleware',
-    # 'thu_lost_and_found_backend.authentication_service.middleware.UserStatusValidationMiddleware',
+    'thu_lost_and_found_backend.authentication_service.middleware.JWTAuthenticationMiddleware',
+    'thu_lost_and_found_backend.authentication_service.middleware.UserStatusValidationMiddleware',
 ]
 
 ROOT_URLCONF = 'thu_lost_and_found_backend.urls'
@@ -170,8 +176,8 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.IsAdminUser'
-        'rest_framework.permissions.AllowAny'
+        'rest_framework.permissions.IsAdminUser'
+        # 'rest_framework.permissions.AllowAny'
     ],
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
     'DEFAULT_FILTER_BACKENDS': [

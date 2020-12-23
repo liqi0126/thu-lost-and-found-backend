@@ -52,7 +52,7 @@ class User(AbstractUser):
     channel_name = models.CharField(max_length=150, null=True, blank=True, unique=True)
 
     is_verified = models.BooleanField(default=False)
-    status = models.CharField(max_length=3, choices=UserStatus.choices, default=UserStatus.INACTIVE)
+    status = models.CharField(max_length=3, choices=UserStatus.choices, default=UserStatus.ACTIVE)
 
     extra = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)

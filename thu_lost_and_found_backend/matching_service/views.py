@@ -1,8 +1,9 @@
 from rest_framework import viewsets
-from rest_framework.pagination import CursorPagination
+from rest_framework.pagination import CursorPagination, LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from thu_lost_and_found_backend.authentication_service.permission import SuperAdminOnlyPermission
 from .models import MatchingEntry, MatchingHyperParam
 from .serializer import MatchingEntrySerializer, MatchingHyperParamSerializer
 from .tasks import update_matching_task
@@ -12,6 +13,7 @@ from .notify import matching_notify
 class MatchingHyperParamViewSet(viewsets.ModelViewSet):
     queryset = MatchingHyperParam.objects.all()
     serializer_class = MatchingHyperParamSerializer
+    permission_classes = [SuperAdminOnlyPermission]
 
     @action(detail=False, methods=['get'], url_path=r'get-hyper')
     def get_hyper(self, request):
@@ -32,9 +34,10 @@ class MatchingHyperParamViewSet(viewsets.ModelViewSet):
 class MatchingEntryViewSet(viewsets.ModelViewSet):
     queryset = MatchingEntry.objects.all()
     serializer_class = MatchingEntrySerializer
-    pagination_class = CursorPagination
+    pagination_class = LimitOffsetPagination
     ordering = ['matching_degree']
     filter_fields = ['lost_notice_id', 'found_notice_id']
+    permission_classes = []
 
     @action(detail=True, methods=['post'], url_path='matching-notify')
     def matching_notify(self, request, pk):

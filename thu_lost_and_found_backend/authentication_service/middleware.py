@@ -24,6 +24,7 @@ class UserStatusValidationMiddleware:
 
     def __call__(self, request):
         user = request.user
+
         if user.is_authenticated:
             if user.status == 'INA':
                 data = {
