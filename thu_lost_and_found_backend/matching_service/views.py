@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .models import MatchingEntry, MatchingHyperParam
 from .serializer import MatchingEntrySerializer, MatchingHyperParamSerializer
 from .tasks import update_matching_task
+from .notify import matching_notify
 
 
 class MatchingHyperParamViewSet(viewsets.ModelViewSet):
@@ -34,3 +35,10 @@ class MatchingEntryViewSet(viewsets.ModelViewSet):
     pagination_class = CursorPagination
     ordering = ['matching_degree']
     filter_fields = ['lost_notice_id', 'found_notice_id']
+
+    @action(detail=True, methods=['post'], url_path='matching-notify')
+    def matching_notify(self, request, pk):
+        matching_entry = MatchingEntry.objects.get(pk=pk)
+        matching_entry.notified = False
+        matching_notify(matching_entry)
+        return Response("ok")
