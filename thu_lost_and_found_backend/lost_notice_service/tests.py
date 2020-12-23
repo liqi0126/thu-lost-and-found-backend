@@ -21,13 +21,14 @@ class LostNoticeTestCase(TestCase):
         property_template = PropertyTemplate.objects.create(name='iphone', type=property_type,
                                                             fields='{"serial": 123}')
 
-        LostNotice.objects.create(
+        lostnotice = LostNotice.objects.create(
             property=Property.objects.create(name='My Iphone', template=property_template,
                                              attributes='{"serial": 123}'),
             lost_location='{"name": "清华大学紫荆学生公寓4号楼","address": "北京市海淀区 ", \
                           "latitude": 40.0104, "longitude": 116.327391}"',
             author=user
         )
+        lostnotice.save()
 
     def test_create(self):
         self.client.login(username='john', password='secret')

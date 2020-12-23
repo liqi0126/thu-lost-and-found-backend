@@ -128,7 +128,7 @@ def matching(lost_notice, found_notice):
 
     # property extra
     if lost_property.extra is not None and found_property.extra is not None:
-        property_extra_matching_degree = matching_hyper.prop_extra_weight * word_matching_num(lost_property_desc, found_property_desc)
+        property_extra_matching_degree = matching_hyper.prop_extra_weight * json_matching_num(lost_property.extra, found_property.extra)
         base += property_extra_matching_degree
         match_degree += property_extra_matching_degree
 

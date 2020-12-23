@@ -1,12 +1,9 @@
-import datetime
-
-from django.utils.dateparse import parse_date, parse_datetime
+from django.utils.dateparse import parse_datetime
 from rest_framework.test import APITestCase
 from rest_framework import status
 
 from .models import MatchingHyperParam, MatchingEntry
 from .match import matching
-from .notify import matching_notify
 
 from thu_lost_and_found_backend.property_service.models import PropertyType, PropertyTemplate, Property
 from thu_lost_and_found_backend.lost_notice_service.models import LostNotice
@@ -14,10 +11,15 @@ from thu_lost_and_found_backend.found_notice_service.models import FoundNotice
 from thu_lost_and_found_backend.user_service.models import User
 
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
 # Create your tests here.
 class MatchingHyperTestCase(APITestCase):
     def setUp(self):
-        pass
+        user = User.objects.create_user(username='john', email='js@js.com', password='js.sj', is_superuser=True)
+        refresh = RefreshToken.for_user(user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
 
     def test_get_hyper(self):
         response = self.client.get('/api/v1/matching-hyperparameters/get-hyper/')
@@ -67,8 +69,8 @@ class MatchingEntryTestCase(APITestCase):
                 "longitude": 116
             }
 
-        self.datetime1 = parse_datetime("2020-12-23T14:36:10.293102+08:00")
-        self.datetime2 = parse_datetime("2020-12-24T14:36:10.293102+08:00")
+        self.datetime1 = parse_datetime("2020-10-23T14:36:10.293102+08:00")
+        self.datetime2 = parse_datetime("2020-11-24T14:36:10.293102+08:00")
         self.datetime3 = parse_datetime("2020-12-25T14:36:10.293102+08:00")
         self.datetime4 = parse_datetime("2020-12-26T14:36:10.293102+08:00")
         self.datetime5 = parse_datetime("2020-12-27T14:36:10.293102+08:00")
@@ -98,9 +100,9 @@ class MatchingEntryTestCase(APITestCase):
         student_card2 = Property(name="徐亦豪的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "白色"}, description="一张学生卡")
         student_card2.save()
 
-        lost_notice = LostNotice.objects.create(property=student_card1, author=self.user1, lost_location={"locations": [self.location_pku]}, est_lost_start_datetime=self.datetime3, est_lost_end_datetime=self.datetime5, description="在北馆丢失了一张学生卡")
+        lost_notice = LostNotice.objects.create(property=student_card1, author=self.user1, lost_location={"locations": [self.location_pku]}, est_lost_start_datetime=self.datetime1, est_lost_end_datetime=self.datetime4, description="在北馆丢失了一张学生卡")
         lost_notice.save()
-        found_notice = FoundNotice.objects.create(property=student_card2, author=self.user2, found_location=self.location_thu, found_datetime=self.datetime1, description="在西操捡到了一张学生卡")
+        found_notice = FoundNotice.objects.create(property=student_card2, author=self.user2, found_location=self.location_thu, found_datetime=self.datetime5, description="在西操捡到了一张学生卡")
         found_notice.save()
 
         matching_degree = matching(lost_notice=lost_notice, found_notice=found_notice)
@@ -110,14 +112,14 @@ class MatchingEntryTestCase(APITestCase):
     def test_student_card_ID_unmatched(self):
         threshold = MatchingHyperParam.get_matching_threshold()
 
-        student_card1 = Property(name="李祁的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "黑色"}, extra={'日期'})
+        student_card1 = Property(name="李祁的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "黑色"}, extra={'新旧': '新'})
         student_card1.save()
-        student_card2 = Property(name="徐亦豪的学生卡", template=self.student_card, attributes={"卡号": "2017010255", "颜色": "黑色"})
+        student_card2 = Property(name="徐亦豪的学生卡", template=self.student_card, attributes={"卡号": "2017010255", "颜色": "黑色"}, extra={'新旧': '旧'})
         student_card2.save()
 
-        lost_notice = LostNotice.objects.create(property=student_card1, author=self.user1, lost_location={"locations": [self.location_pku]})
+        lost_notice = LostNotice.objects.create(property=student_card1, author=self.user1, lost_location={"locations": [self.location_pku]},  est_lost_start_datetime=self.datetime1, est_lost_end_datetime=self.datetime1, extra={'什么时候': "星期一"})
         lost_notice.save()
-        found_notice = FoundNotice.objects.create(property=student_card2, author=self.user2, found_location=self.location_thu, found_datetime=self.datetime1)
+        found_notice = FoundNotice.objects.create(property=student_card2, author=self.user2, found_location=self.location_thu, found_datetime=self.datetime5, extra={"什么时候": "星期二"})
         found_notice.save()
 
         matching_degree = matching(lost_notice=lost_notice, found_notice=found_notice)
@@ -139,23 +141,8 @@ class MatchingEntryTestCase(APITestCase):
         matching_entry = MatchingEntry.objects.create(lost_notice=lost_notice, found_notice=found_notice, matching_degree=matching_degree)
         matching_entry.save()
 
-        response = self.client.post("/api/v1/matching-entries/1/matching-notify/")
-
+        response = self.client.post(f"/api/v1/matching-entries/{matching_entry.pk}/matching-notify/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_extra(self):
-        student_card1 = Property(name="李祁的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "黑色"}, description="李祁的学生卡")
-        student_card1.save()
-        student_card2 = Property(name="徐亦豪的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "白色"}, description="一张学生卡")
-        student_card2.save()
-
-        lost_notice = LostNotice.objects.create(property=student_card1, author=self.user1, lost_location={"locations": [self.location_pku]}, description="在北馆丢失了一张学生卡")
-        lost_notice.save()
-        found_notice = FoundNotice.objects.create(property=student_card2, author=self.user2, found_location=self.location_thu, found_datetime=self.datetime1, description="在西操捡到了一张学生卡")
-        found_notice.save()
-
-        matching_degree = matching(lost_notice=lost_notice, found_notice=found_notice)
-        matching_entry = MatchingEntry.objects.create(lost_notice=lost_notice, found_notice=found_notice, matching_degree=matching_degree)
-        matching_entry.save()
-
-        self.assertEqual()
+        response = self.client.post(f"/api/v1/matching-entries/{matching_entry.pk}/matching-notify/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
