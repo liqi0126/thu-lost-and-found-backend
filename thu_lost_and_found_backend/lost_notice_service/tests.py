@@ -10,24 +10,30 @@ from thu_lost_and_found_backend.user_service.models import User
 
 
 class LostNoticeTestCase(TestCase):
-    client = Client()
 
     def setUp(self):
-        user = User.objects.create(username='john', password=make_password('secret'), first_name='Thu',
-                                   last_name='Student',
-                                   is_verified=True, status='ACT', is_staff=False, is_superuser=False,
-                                   date_joined=make_aware(datetime.now()))
-        property_type = PropertyType.objects.create(name='electronic')
-        property_template = PropertyTemplate.objects.create(name='iphone', type=property_type,
-                                                            fields='{"serial": 123}')
+        self.client = Client()
+        self.user = User.objects.create(username='john', password=make_password('secret'), first_name='Thu',
+                                        last_name='Student',
+                                        is_verified=True, status='ACT', is_staff=False, is_superuser=False,
+                                        date_joined=make_aware(datetime.now()))
+        self.property_type = PropertyType.objects.create(name='electronic')
+        self.property_template = PropertyTemplate.objects.create(name='iphone', type=self.property_type,
+                                                                 fields='{"serial": 123}')
 
-        LostNotice.objects.create(
-            property=Property.objects.create(name='My Iphone', template=property_template,
+        self.notice = LostNotice.objects.create(
+            property=Property.objects.create(name='My Iphone', template=self.property_template,
                                              attributes='{"serial": 123}'),
             lost_location='{"name": "清华大学紫荆学生公寓4号楼","address": "北京市海淀区 ", \
                           "latitude": 40.0104, "longitude": 116.327391}"',
-            author=user
+            author=self.user
         )
+
+    def test_detail(self):
+        response = self.client.get(f'/api/v1/lost-notices/{self.notice.id}/?format=json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['id'], self.notice.id)
 
     def test_create(self):
         self.client.login(username='john', password='secret')
@@ -62,11 +68,6 @@ class LostNoticeTestCase(TestCase):
         response = self.client.get('/api/v1/lost-notices/?format=json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()['results']), 1)
-
-    def test_detail(self):
-        response = self.client.get('/api/v1/lost-notices/1/?format=json')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['id'], 1)
 
     def test_update(self):
         pass
