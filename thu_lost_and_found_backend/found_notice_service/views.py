@@ -1,10 +1,9 @@
 import json
 
-
 from django.db.models import Max, Count
 from django.db.models.functions import TruncYear, TruncMonth, TruncDay
-from django.utils.dateparse import parse_datetime
 from django.http import HttpResponseBadRequest
+from django.utils.dateparse import parse_datetime
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import CursorPagination
@@ -15,13 +14,15 @@ from thu_lost_and_found_backend.found_notice_service.serializer import FoundNoti
 from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, delete_instance_medias, \
     delete_media_from_url
 
+from thu_lost_and_found_backend.authentication_service.permission import NoticePermission
+
 
 class FoundNoticeViewSet(viewsets.ModelViewSet):
     queryset = FoundNotice.objects.all()
     serializer_class = FoundNoticeSerializer
     pagination_class = CursorPagination
     ordering = ['-updated_at']
-    # permission_classes = [NoticePermission]
+    permission_classes = [NoticePermission]
 
     filterset_fields = ['status', 'found_datetime', 'updated_at', 'created_at',
                         'property__template__type__name', 'property__tags__name',
@@ -33,9 +34,9 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
                      'author__username', 'extra']
 
     def create(self, request, *args, **kwargs):
-        # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
         request.POST._mutable = True
-        request.data['extra'] = '{"author":1}'
+
+        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
 
         if len(request.FILES) != 0:
             id_max = FoundNotice.objects.all().aggregate(Max('id'))['id__max']
@@ -54,8 +55,8 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
-        # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":2}'
+        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        # request.data['extra'] = '{"author":2}'
 
         if len(request.FILES) != 0:
             images_url = save_uploaded_images(request, 'found_notice_images', instance_id=instance.id)
@@ -77,6 +78,32 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         delete_instance_medias(instance, 'images', json=True)
         instance.delete()
+
+    @action(detail=False, methods=['get'], url_path=r'index')
+    def index(self, request):
+
+        data = {'total': 0, 'results': []}
+
+        notices = FoundNotice.objects.all().order_by('-updated_at')
+        data['total'] = notices.count()
+
+        start = int(request.GET['start']) if 'start' in request.GET else 0
+        end = int(request.GET['end']) if 'end' in request.GET else 9
+
+        if end + 1 > data['total']:
+            end = data['total']
+        elif end < 0:
+            end = 0
+
+        if start < 0 or start + 1 > data['total']:
+            start = 0
+
+        sliced_notices = notices[start: end + 1]
+
+        for notice in sliced_notices:
+            data['results'].append(FoundNoticeSerializer(notice).data)
+
+        return Response(data)
 
     @action(detail=False, methods=['post'], url_path=r'upload-image')
     def upload_image(self, request):
@@ -129,11 +156,14 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         queryset = FoundNotice.objects.filter(created_at__range=(start_time, end_time))
 
         if date_type == 'year':
-            queryset = queryset.annotate(month=TruncYear('created_at')).values('year').annotate(count=Count('id')).values('year', 'count')
+            queryset = queryset.annotate(month=TruncYear('created_at')).values('year').annotate(
+                count=Count('id')).values('year', 'count')
         if date_type == 'month':
-            queryset = queryset.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).values('month', 'count')
+            queryset = queryset.annotate(month=TruncMonth('created_at')).values('month').annotate(
+                count=Count('id')).values('month', 'count')
         else:
-            queryset = queryset.annotate(day=TruncDay('created_at')).values('day').annotate(count=Count('id')).values('day', 'count')
+            queryset = queryset.annotate(day=TruncDay('created_at')).values('day').annotate(count=Count('id')).values(
+                'day', 'count')
 
         return Response(queryset)
 

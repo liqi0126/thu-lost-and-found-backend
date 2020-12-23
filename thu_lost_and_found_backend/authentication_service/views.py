@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from django.utils.timezone import make_aware
 
 import requests
 from django.contrib.auth.hashers import make_password
@@ -23,7 +24,7 @@ def create_user_base_on_wechat(open_id):
         status='ACT',
         is_staff=False,
         is_superuser=False,
-        date_joined=datetime.now()
+        date_joined=make_aware(datetime.now())
     )
 
 

@@ -14,7 +14,7 @@ class PropertyTypeViewSet(viewsets.ModelViewSet):
     serializer_class = PropertyTypeSerializer
     filterset_fields = ['name']
     search_fields = ['name']
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_destroy(self, instance):
         delete_instance_medias(instance, 'thumbnail')
@@ -26,7 +26,7 @@ class PropertyTemplateViewSet(viewsets.ModelViewSet):
     serializer_class = PropertyTemplateSerializer
     filterset_fields = ['name', 'type__name']
     search_fields = ['name', 'type__name']
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_update(self, serializer):
         update_matching_task(self.kwargs['id'])
