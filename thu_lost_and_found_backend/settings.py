@@ -24,15 +24,13 @@ APP_ENV = env('APP_ENV')
 SECRET_KEY = env('APP_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('APP_DEBUG')
+DEBUG = env.bool('APP_DEBUG', False)
 
 APP_URL = env('APP_URL')
 
 ALLOWED_HOSTS = ['*']
 
-CORS_ALLOWED_ORIGINS = [
-    "*"
-]
+CORS_ORIGIN_ALLOW_ALL = DEBUG
 
 # Application definition
 
