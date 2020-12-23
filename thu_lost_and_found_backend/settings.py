@@ -30,14 +30,7 @@ APP_URL = env('APP_URL')
 
 ALLOWED_HOSTS = ['*']
 
-<<<<<<< HEAD
 CORS_ORIGIN_ALLOW_ALL = DEBUG
-=======
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost",
-    "http://127.0.0.1"
-]
->>>>>>> add-tests
 
 # Application definition
 
