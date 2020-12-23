@@ -87,7 +87,9 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         start = int(request.GET['start']) if 'start' in request.GET else 0
         end = int(request.GET['end']) if 'end' in request.GET else 9
 
-        if end + 1 > data['total'] or end < 0:
+        if end + 1 > data['total']:
+            end = data['total']
+        elif end < 0:
             end = 0
 
         if start < 0 or start + 1 > data['total']:
