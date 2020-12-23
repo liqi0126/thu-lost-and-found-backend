@@ -15,13 +15,14 @@ from thu_lost_and_found_backend.tag_service.views import TagViewSet
 from thu_lost_and_found_backend.user_service.views import UserInvitationViewSet, \
     UserEmailVerificationViewSet, UserVerificationApplicationViewSet
 from thu_lost_and_found_backend.user_service.views import UserViewSet
-from thu_lost_and_found_backend.matching_service.views import MatchingEntryViewSet
+from thu_lost_and_found_backend.matching_service.views import MatchingEntryViewSet, MatchingHyperParamViewSet
 
 router = routers.DefaultRouter()
 router.register(r'property-types', PropertyTypeViewSet)
 router.register(r'property-templates', PropertyTemplateViewSet)
 router.register(r'properties', PropertyViewSet)
 router.register(r'matching-entries', MatchingEntryViewSet)
+router.register(r'matching-hyperparameters', MatchingHyperParamViewSet)
 router.register(r'contacts', ContactViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'found-notices', FoundNoticeViewSet)
@@ -33,14 +34,13 @@ router.register(r'user-verification-applications', UserVerificationApplicationVi
 router.register(r'reports', ReportViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('admin/', admin.site.urls),
-    path('auth/', include('thu_lost_and_found_backend.authentication_service.urls')),
-    path('chat/', include('thu_lost_and_found_backend.chat_service.urls'))  # TODO: temp file for debug
+    path('api/v1/', include(router.urls)),
+    path('api/v1/admin/', admin.site.urls),
+    path('api/v1/auth/', include('thu_lost_and_found_backend.authentication_service.urls')),
+    path('api/v1/chat/', include('thu_lost_and_found_backend.chat_service.urls')),
 ]
 
 # image links
 # if /media/ is defined as the MEDIA_URL, the below statements are needed
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

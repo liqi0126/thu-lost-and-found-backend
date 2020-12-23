@@ -34,15 +34,20 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
     username = models.CharField(max_length=125)
-    email = models.EmailField(unique=True, max_length=125, null=True, blank=True)
     avatar = models.ImageField(upload_to=image_upload_path, null=True, blank=True)
     wechat_avatar = models.CharField(max_length=225, null=True, blank=True)
 
+    email = models.EmailField(unique=True, max_length=125, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True, unique=True)
+    wechat_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
+
+    email_visible = models.BooleanField(default=False)
+    phone_visible = models.BooleanField(default=False)
+    wechat_visible = models.BooleanField(default=False)
+
     student_id = models.CharField(max_length=20, null=True, blank=True, unique=True)
     department = models.CharField(max_length=20, null=True, blank=True)
     wechat_openid = models.CharField(max_length=50, null=True, blank=True, unique=True)
-    wechat_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
 
     channel_name = models.CharField(max_length=150, null=True, blank=True, unique=True)
 
@@ -52,6 +57,8 @@ class User(AbstractUser):
     extra = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)
+
+    suspended_reason = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.username

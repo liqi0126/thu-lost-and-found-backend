@@ -92,7 +92,7 @@ email_matched_notify_template = """
                                                             <td class="h1 pb25" style="color:#ffffff; font-family:'Muli', Arial,sans-serif; font-size:40px; line-height:46px; text-align:center; padding-bottom:25px;">紫荆寻物</td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="text-center pb25" style="color:#c1cddc; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:30px; text-align:center; padding-bottom:25px;">系统检测到有招领启事的描述与您之前所遗失的{object}非常类似<br> 请扫描下方二维码登录小程序查看详情</td>
+                                                            <td class="text-center pb25" style="color:#c1cddc; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:30px; text-align:center; padding-bottom:25px;">用户<span style="color:#DFFF00; font-size:150%"> {found_notice_author} </span>拾取的<span style="color:#FFBF00; font-size:150%"> {found_property} </span><br>可能是您遗失的<span style="color:#FF7F50; font-size:150%"> {found_property} </span><br>扫描下方二维码登录小程序查看详情</td>
                                                         </tr>
                                                         <tr>
                                                         </tr>
