@@ -37,6 +37,7 @@ class LostNoticeViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         request.data['extra'] = '{"author":' + str(request.user.id) + '}'
         # request.data['extra'] = '{"author":2}'
+        request.POST._mutable = True
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
