@@ -14,13 +14,15 @@ from thu_lost_and_found_backend.found_notice_service.serializer import FoundNoti
 from thu_lost_and_found_backend.helpers.toolkits import save_uploaded_images, delete_instance_medias, \
     delete_media_from_url
 
+from thu_lost_and_found_backend.authentication_service.permission import NoticePermission
+
 
 class FoundNoticeViewSet(viewsets.ModelViewSet):
     queryset = FoundNotice.objects.all()
     serializer_class = FoundNoticeSerializer
     pagination_class = CursorPagination
     ordering = ['-updated_at']
-    # permission_classes = [NoticePermission]
+    permission_classes = [NoticePermission]
 
     filterset_fields = ['status', 'found_datetime', 'updated_at', 'created_at',
                         'property__template__type__name', 'property__tags__name',
@@ -32,8 +34,8 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
                      'author__username', 'extra']
 
     def create(self, request, *args, **kwargs):
-        # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":2}'
+        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        # request.data['extra'] = '{"author":2}'
 
         if len(request.FILES) != 0:
             id_max = FoundNotice.objects.all().aggregate(Max('id'))['id__max']
@@ -52,8 +54,8 @@ class FoundNoticeViewSet(viewsets.ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
-        # request.data['extra'] = '{"author":' + str(request.user.id) + '}'
-        request.data['extra'] = '{"author":2}'
+        request.data['extra'] = '{"author":' + str(request.user.id) + '}'
+        # request.data['extra'] = '{"author":2}'
 
         if len(request.FILES) != 0:
             images_url = save_uploaded_images(request, 'found_notice_images', instance_id=instance.id)

@@ -3,6 +3,7 @@ from rest_framework.pagination import CursorPagination, LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from thu_lost_and_found_backend.authentication_service.permission import SuperAdminOnlyPermission
 from .models import MatchingEntry, MatchingHyperParam
 from .serializer import MatchingEntrySerializer, MatchingHyperParamSerializer
 from .tasks import update_matching_task
@@ -12,6 +13,7 @@ from .notify import matching_notify
 class MatchingHyperParamViewSet(viewsets.ModelViewSet):
     queryset = MatchingHyperParam.objects.all()
     serializer_class = MatchingHyperParamSerializer
+    permission_classes = [SuperAdminOnlyPermission]
 
     @action(detail=False, methods=['get'], url_path=r'get-hyper')
     def get_hyper(self, request):

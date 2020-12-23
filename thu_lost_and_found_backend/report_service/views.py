@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
+from thu_lost_and_found_backend.authentication_service.permission import ReportPermission
 from thu_lost_and_found_backend.helpers.toolkits import check_missing_fields
 from thu_lost_and_found_backend.report_service.models import Report
 from thu_lost_and_found_backend.report_service.serializer import ReportSerializer
@@ -37,7 +38,7 @@ class ReportViewSet(viewsets.ModelViewSet):
                         'found_notice']
     search_fields = ['description', 'user__username', 'submit_user__username', 'verdict']
 
-    # permission_classes = [ReportPermission]
+    permission_classes = [ReportPermission]
 
     def create(self, request, *args, **kwargs):
         request.POST._mutable = True
