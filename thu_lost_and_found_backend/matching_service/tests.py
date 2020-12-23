@@ -1,3 +1,6 @@
+import datetime
+
+from django.utils.dateparse import parse_date, parse_datetime
 from rest_framework.test import APITestCase
 from rest_framework import status
 
@@ -21,8 +24,6 @@ class MatchingHyperTestCase(APITestCase):
         self.assertIn('matching_threshold', response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-
-    # How to use celery
     def test_change_hyper(self):
         data = {
             'matching_threshold': 0.1
@@ -43,8 +44,12 @@ class MatchingEntryTestCase(APITestCase):
 
         self.card = PropertyType(name="卡片")
         self.card.save()
+
         self.student_card = PropertyTemplate(name="学生卡", fields={"卡号": 1200, "颜色": 1}, type=self.card)
         self.student_card.save()
+
+        self.bank_card = PropertyTemplate(name="银行卡", fields={"卡号": 10, "银行": 5}, type=self.card)
+        self.bank_card.save()
 
         self.location_thu = {
                 "name": "北京大学",
@@ -62,8 +67,28 @@ class MatchingEntryTestCase(APITestCase):
                 "longitude": 116
             }
 
-        self.datetime1 = "2020-12-23T14:36:10.293102+08:00"
-        self.datetime2 = "2020-12-23T14:36:10.293102+08:00"
+        self.datetime1 = parse_datetime("2020-12-23T14:36:10.293102+08:00")
+        self.datetime2 = parse_datetime("2020-12-24T14:36:10.293102+08:00")
+        self.datetime3 = parse_datetime("2020-12-25T14:36:10.293102+08:00")
+        self.datetime4 = parse_datetime("2020-12-26T14:36:10.293102+08:00")
+        self.datetime5 = parse_datetime("2020-12-27T14:36:10.293102+08:00")
+
+
+    def test_different_template(self):
+        student_card = Property(name="李祁的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "黑色"})
+        student_card.save()
+        bank_card = Property(name="徐亦豪的银行卡", template=self.bank_card, attributes={"卡号": "2017010256", "银行": "农行"})
+        bank_card.save()
+
+        lost_notice = LostNotice.objects.create(property=student_card, author=self.user1, lost_location={"locations": [self.location_pku]}, est_lost_start_datetime=self.datetime1, est_lost_end_datetime=self.datetime2)
+        lost_notice.save()
+        found_notice = FoundNotice.objects.create(property=bank_card, author=self.user2, found_location=self.location_thu, found_datetime=self.datetime4)
+        found_notice.save()
+
+        matching_degree = matching(lost_notice=lost_notice, found_notice=found_notice)
+
+        self.assertEqual(matching_degree, 0)
+
 
     def test_student_card_ID_matched(self):
         threshold = MatchingHyperParam.get_matching_threshold()
@@ -73,7 +98,7 @@ class MatchingEntryTestCase(APITestCase):
         student_card2 = Property(name="徐亦豪的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "白色"}, description="一张学生卡")
         student_card2.save()
 
-        lost_notice = LostNotice.objects.create(property=student_card1, author=self.user1, lost_location={"locations": [self.location_pku]}, description="在北馆丢失了一张学生卡")
+        lost_notice = LostNotice.objects.create(property=student_card1, author=self.user1, lost_location={"locations": [self.location_pku]}, est_lost_start_datetime=self.datetime3, est_lost_end_datetime=self.datetime5, description="在北馆丢失了一张学生卡")
         lost_notice.save()
         found_notice = FoundNotice.objects.create(property=student_card2, author=self.user2, found_location=self.location_thu, found_datetime=self.datetime1, description="在西操捡到了一张学生卡")
         found_notice.save()
@@ -85,7 +110,7 @@ class MatchingEntryTestCase(APITestCase):
     def test_student_card_ID_unmatched(self):
         threshold = MatchingHyperParam.get_matching_threshold()
 
-        student_card1 = Property(name="李祁的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "黑色"})
+        student_card1 = Property(name="李祁的学生卡", template=self.student_card, attributes={"卡号": "2017010256", "颜色": "黑色"}, extra={'日期'})
         student_card1.save()
         student_card2 = Property(name="徐亦豪的学生卡", template=self.student_card, attributes={"卡号": "2017010255", "颜色": "黑色"})
         student_card2.save()
