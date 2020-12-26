@@ -157,7 +157,7 @@ class UserInvitationViewSet(viewsets.ModelViewSet):
                   message='',
                   html_message=invitation_template.format(
                       role=request.data['role'],
-                      invitation_link=f'{settings.APP_URL}/#/invitation/{request.data["token"]}/',
+                      invitation_link=f'{settings.APP_URL}/#/create-accounts-invitation/{request.data["token"]}/',
                       expiration_date=request.data['expiration_date'].strftime('%d-%m-%Y')
                   ),
 
