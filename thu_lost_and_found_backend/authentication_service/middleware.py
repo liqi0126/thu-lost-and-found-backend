@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
-from rest_framework_simplejwt import authentication
+from rest_framework_simplejwt import authentication, exceptions
 
 
 class JWTAuthenticationMiddleware:
@@ -9,10 +9,14 @@ class JWTAuthenticationMiddleware:
 
     def __call__(self, request):
         # If user is not authenticated with django auth system
-        # Check its JWT
-        if not request.user.is_authenticated:
-            request.user = authentication.JWTAuthentication().authenticate(request)
-            request.user = request.user[0] if request.user else AnonymousUser()
+        try:
+            # Check its JWT
+            if not request.user.is_authenticated:
+                request.user = authentication.JWTAuthentication().authenticate(request)
+                request.user = request.user[0] if request.user else AnonymousUser()
+
+        except exceptions.InvalidToken:
+            request.user = AnonymousUser()
 
         response = self.get_response(request)
         return response
