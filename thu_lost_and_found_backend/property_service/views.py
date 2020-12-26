@@ -29,7 +29,7 @@ class PropertyTemplateViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_update(self, serializer):
-        update_matching_task(self.kwargs['id'])
+        update_matching_task(self.kwargs['pk'])
         serializer.save()
 
     def perform_destroy(self, instance):
